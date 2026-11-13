@@ -1,8 +1,11 @@
-// ClawSwarm Nexus — 20-Buyer x 5-Seller Commit-Reveal Sealed-Bid Swarm Clearinghouse
-// Implements Track 05 (Swarms): SHA-256 commitments, reveal verification, demand pooling,
-// uniform Vickrey-adjusted clearing price, and pro-rata settlement share allocation.
+// VeriPact (ClawSwarm Nexus v2.0) — 20-Buyer x 5-Seller NEP-413 Signed Commit-Reveal Swarm Clearinghouse
+// Each of the 25 participants holds an independent Ed25519 keypair, commits SHA-256(bid || salt),
+// signs the commitment via NEP-413 Borsh (tag 2147484061), and undergoes cryptographic reveal verification.
 
-import { sha256Hex } from './crypto-keys.js';
+import {
+  createScopedAgentSigner,
+  sha256Hex,
+} from './crypto-keys.js';
 
 export interface SwarmBuyerBid {
   buyerId: string;
@@ -27,13 +30,17 @@ export interface SwarmSellerAsk {
 export interface CommitmentRecord {
   participantId: string;
   role: 'BUYER' | 'SELLER';
+  publicKeyNear: string;
   commitmentHash: string;
+  nep413SignatureHex: string;
+  nep413Verified: boolean;
   revealed: boolean;
   revealVerified: boolean;
 }
 
 export interface BuyerAllocation {
   buyerId: string;
+  publicKeyNear: string;
   unitsRequested: number;
   unitsFilled: number;
   maxUnitPriceNear: number;
@@ -41,10 +48,12 @@ export interface BuyerAllocation {
   totalPaidNear: number;
   consumerSurplusNear: number;
   commitmentHash: string;
+  nep413SignatureHex: string;
 }
 
 export interface SellerAllocation {
   sellerId: string;
+  publicKeyNear: string;
   baseAskUnitPriceNear: number;
   effectiveAskUnitPriceNear: number;
   floorUnitPriceNear: number;
@@ -54,6 +63,7 @@ export interface SellerAllocation {
   reputationScore: number;
   teeAttested: boolean;
   commitmentHash: string;
+  nep413SignatureHex: string;
 }
 
 export interface SwarmAuctionResult {
@@ -62,6 +72,7 @@ export interface SwarmAuctionResult {
   totalBuyersSubmitted: number;
   totalSellersSubmitted: number;
   validCommitmentsVerified: number;
+  validNep413SignaturesVerified: number;
   rejectedCommitments: number;
   demandPoolingActive: boolean;
   pooledDiscountBpsApplied: number;
@@ -96,15 +107,14 @@ export function generateDefault20x5SwarmRoster(subtaskCategory = 'crosschain_int
 } {
   const buyers: SwarmBuyerBid[] = [];
   for (let i = 1; i <= 20; i++) {
-    // Deterministic spread of buyer reservation prices between 0.34 NEAR and 0.68 NEAR per unit
     const maxUnitPriceNear = Number((0.68 - (i - 1) * 0.016).toFixed(4));
-    const unitsRequested = (i % 3) + 1; // 1 to 3 units per buyer
+    const unitsRequested = (i % 3) + 1;
     buyers.push({
       buyerId: `buyer-${i}.swarm.testnet`,
       subtaskCategory,
       unitsRequested,
       maxUnitPriceNear,
-      salt: `clawswarm-b${String(i).padStart(2, '0')}-seed-2026`,
+      salt: `veripact-b${String(i).padStart(2, '0')}-seed-2026`,
     });
   }
 
@@ -114,22 +124,22 @@ export function generateDefault20x5SwarmRoster(subtaskCategory = 'crosschain_int
       specialization: 'TEE Verifiable Solver & 1Click Router',
       baseAskUnitPriceNear: 0.42,
       floorUnitPriceNear: 0.355,
-      bulkDiscountBps: 1000, // 10% bulk discount when >= 3 buyers pool
+      bulkDiscountBps: 1000,
       maxCapacityUnits: 14,
       reputationScore: 98,
       teeAttested: true,
-      salt: 'clawswarm-s01-tee-solver-2026',
+      salt: 'veripact-s01-tee-solver-2026',
     },
     {
       sellerId: 'seller-2.swarm.testnet',
       specialization: 'FastNEAR State Indexer & Liquidity Solver',
       baseAskUnitPriceNear: 0.44,
       floorUnitPriceNear: 0.37,
-      bulkDiscountBps: 800, // 8% bulk discount
+      bulkDiscountBps: 800,
       maxCapacityUnits: 12,
       reputationScore: 95,
       teeAttested: true,
-      salt: 'clawswarm-s02-fastnear-2026',
+      salt: 'veripact-s02-fastnear-2026',
     },
     {
       sellerId: 'seller-3.swarm.testnet',
@@ -140,7 +150,7 @@ export function generateDefault20x5SwarmRoster(subtaskCategory = 'crosschain_int
       maxCapacityUnits: 10,
       reputationScore: 91,
       teeAttested: true,
-      salt: 'clawswarm-s03-relayer-2026',
+      salt: 'veripact-s03-relayer-2026',
     },
     {
       sellerId: 'seller-4.swarm.testnet',
@@ -151,7 +161,7 @@ export function generateDefault20x5SwarmRoster(subtaskCategory = 'crosschain_int
       maxCapacityUnits: 10,
       reputationScore: 87,
       teeAttested: false,
-      salt: 'clawswarm-s04-quoter-2026',
+      salt: 'veripact-s04-quoter-2026',
     },
     {
       sellerId: 'seller-5.swarm.testnet',
@@ -162,7 +172,7 @@ export function generateDefault20x5SwarmRoster(subtaskCategory = 'crosschain_int
       maxCapacityUnits: 8,
       reputationScore: 84,
       teeAttested: false,
-      salt: 'clawswarm-s05-archive-2026',
+      salt: 'veripact-s05-archive-2026',
     },
   ];
 
@@ -178,12 +188,28 @@ export async function runSealedBidSwarmAuction(params: {
 }): Promise<SwarmAuctionResult> {
   const tamperedSet = new Set(params.tamperedParticipantIds ?? []);
   const commitments: CommitmentRecord[] = [];
-  const buyerCommitMap = new Map<string, string>();
-  const sellerCommitMap = new Map<string, string>();
+  const buyerMetaMap = new Map<
+    string,
+    { commitHash: string; pubKey: string; sigHex: string }
+  >();
+  const sellerMetaMap = new Map<
+    string,
+    { commitHash: string; pubKey: string; sigHex: string }
+  >();
 
-  // Phase 1 & 2: Compute Commitments and Verify Reveals
+  // Phase 1 & 2: Each of the 20 Buyers and 5 Sellers generates an Ed25519 keypair,
+  // signs its commitment via NEP-413, and submits plaintext reveal for verification.
   const validBuyers: SwarmBuyerBid[] = [];
-  for (const b of params.buyers) {
+  for (let idx = 0; idx < params.buyers.length; idx++) {
+    const b = params.buyers[idx];
+    const buyerSigner = await createScopedAgentSigner({
+      accountId: b.buyerId,
+      allowedReceivers: ['clearinghouse.veripact.near'],
+      allowedMethods: ['submit_bid_commitment', 'reveal_bid'],
+      maxAllowanceNear: 10,
+      maxSingleCallNear: 5,
+    });
+
     const commitHash = await computeBidCommitment({
       accountId: b.buyerId,
       role: 'BUYER',
@@ -191,6 +217,23 @@ export async function runSealedBidSwarmAuction(params: {
       quantity: b.unitsRequested,
       salt: b.salt,
     });
+
+    const nonceHex = (idx + 1).toString(16).padStart(8, '0') + commitHash.slice(0, 56);
+    const nep413Signed = await buyerSigner.signNep413({
+      message: commitHash,
+      nonceHex,
+      recipient: 'clearinghouse.veripact.near',
+    });
+
+    const nep413Verified = await buyerSigner.verifyNep413(
+      {
+        message: commitHash,
+        nonceHex,
+        recipient: 'clearinghouse.veripact.near',
+      },
+      nep413Signed.signatureHex
+    );
+
     const revealSalt = tamperedSet.has(b.buyerId) ? `${b.salt}-tampered` : b.salt;
     const recomputedHash = await computeBidCommitment({
       accountId: b.buyerId,
@@ -199,20 +242,37 @@ export async function runSealedBidSwarmAuction(params: {
       quantity: b.unitsRequested,
       salt: revealSalt,
     });
-    const verified = commitHash === recomputedHash;
+
+    const verified = commitHash === recomputedHash && nep413Verified;
     commitments.push({
       participantId: b.buyerId,
       role: 'BUYER',
+      publicKeyNear: buyerSigner.publicKeyNear,
       commitmentHash: commitHash,
+      nep413SignatureHex: nep413Signed.signatureHex,
+      nep413Verified,
       revealed: true,
       revealVerified: verified,
     });
-    buyerCommitMap.set(b.buyerId, commitHash);
+    buyerMetaMap.set(b.buyerId, {
+      commitHash,
+      pubKey: buyerSigner.publicKeyNear,
+      sigHex: nep413Signed.signatureHex,
+    });
     if (verified) validBuyers.push(b);
   }
 
   const validSellers: SwarmSellerAsk[] = [];
-  for (const s of params.sellers) {
+  for (let idx = 0; idx < params.sellers.length; idx++) {
+    const s = params.sellers[idx];
+    const sellerSigner = await createScopedAgentSigner({
+      accountId: s.sellerId,
+      allowedReceivers: ['clearinghouse.veripact.near'],
+      allowedMethods: ['submit_ask_commitment', 'reveal_ask'],
+      maxAllowanceNear: 10,
+      maxSingleCallNear: 5,
+    });
+
     const commitHash = await computeBidCommitment({
       accountId: s.sellerId,
       role: 'SELLER',
@@ -220,6 +280,23 @@ export async function runSealedBidSwarmAuction(params: {
       quantity: s.maxCapacityUnits,
       salt: s.salt,
     });
+
+    const nonceHex = (idx + 101).toString(16).padStart(8, '0') + commitHash.slice(0, 56);
+    const nep413Signed = await sellerSigner.signNep413({
+      message: commitHash,
+      nonceHex,
+      recipient: 'clearinghouse.veripact.near',
+    });
+
+    const nep413Verified = await sellerSigner.verifyNep413(
+      {
+        message: commitHash,
+        nonceHex,
+        recipient: 'clearinghouse.veripact.near',
+      },
+      nep413Signed.signatureHex
+    );
+
     const revealSalt = tamperedSet.has(s.sellerId) ? `${s.salt}-tampered` : s.salt;
     const recomputedHash = await computeBidCommitment({
       accountId: s.sellerId,
@@ -228,40 +305,49 @@ export async function runSealedBidSwarmAuction(params: {
       quantity: s.maxCapacityUnits,
       salt: revealSalt,
     });
-    const verified = commitHash === recomputedHash;
+
+    const verified = commitHash === recomputedHash && nep413Verified;
     commitments.push({
       participantId: s.sellerId,
       role: 'SELLER',
+      publicKeyNear: sellerSigner.publicKeyNear,
       commitmentHash: commitHash,
+      nep413SignatureHex: nep413Signed.signatureHex,
+      nep413Verified,
       revealed: true,
       revealVerified: verified,
     });
-    sellerCommitMap.set(s.sellerId, commitHash);
+    sellerMetaMap.set(s.sellerId, {
+      commitHash,
+      pubKey: sellerSigner.publicKeyNear,
+      sigHex: nep413Signed.signatureHex,
+    });
     if (verified) validSellers.push(s);
   }
 
   const demandPoolingActive = validBuyers.length >= 3;
 
-  // Sort buyers descending by maxUnitPriceNear, tie-break by commitmentHash ASC
   const sortedBuyers = [...validBuyers].sort((a, b) => {
     if (b.maxUnitPriceNear !== a.maxUnitPriceNear) {
       return b.maxUnitPriceNear - a.maxUnitPriceNear;
     }
-    return (buyerCommitMap.get(a.buyerId) ?? '').localeCompare(
-      buyerCommitMap.get(b.buyerId) ?? ''
+    return (buyerMetaMap.get(a.buyerId)?.commitHash ?? '').localeCompare(
+      buyerMetaMap.get(b.buyerId)?.commitHash ?? ''
     );
   });
 
-  // Compute effective asks and sort sellers ascending by effectiveAskUnitPriceNear
   const sellersWithEffective = validSellers.map((s) => {
     const discountFactor = demandPoolingActive ? 1 - s.bulkDiscountBps / 10000 : 1;
     const effectiveAskUnitPriceNear = Number(
       (s.baseAskUnitPriceNear * discountFactor).toFixed(4)
     );
+    const meta = sellerMetaMap.get(s.sellerId);
     return {
       ...s,
       effectiveAskUnitPriceNear,
-      commitmentHash: sellerCommitMap.get(s.sellerId) ?? '',
+      commitmentHash: meta?.commitHash ?? '',
+      publicKeyNear: meta?.pubKey ?? '',
+      nep413SignatureHex: meta?.sigHex ?? '',
     };
   });
 
@@ -275,14 +361,12 @@ export async function runSealedBidSwarmAuction(params: {
     return a.commitmentHash.localeCompare(b.commitmentHash);
   });
 
-  // Phase 3: Match aggregate demand & supply curves
   const totalDemandUnits = sortedBuyers.reduce((sum, b) => sum + b.unitsRequested, 0);
   const totalSupplyUnits = sellersWithEffective.reduce(
     (sum, s) => sum + s.maxCapacityUnits,
     0
   );
 
-  // Build unit-level demand and supply schedules to find exact intersection
   const unitDemands: Array<{ buyerId: string; reservationPrice: number }> = [];
   for (const b of sortedBuyers) {
     for (let u = 0; u < b.unitsRequested; u++) {
@@ -332,7 +416,6 @@ export async function runSealedBidSwarmAuction(params: {
         )
       : 0;
 
-  // Count filled units per buyer and seller
   const buyerFilledCounts = new Map<string, number>();
   const sellerAwardedCounts = new Map<string, number>();
   for (let k = 0; k < clearedUnits; k++) {
@@ -348,15 +431,18 @@ export async function runSealedBidSwarmAuction(params: {
     const consumerSurplusNear = Number(
       (unitsFilled * (b.maxUnitPriceNear - uniformClearingPriceNear)).toFixed(4)
     );
+    const meta = buyerMetaMap.get(b.buyerId);
     return {
       buyerId: b.buyerId,
+      publicKeyNear: meta?.pubKey ?? '',
       unitsRequested: b.unitsRequested,
       unitsFilled,
       maxUnitPriceNear: b.maxUnitPriceNear,
       clearingUnitPriceNear: uniformClearingPriceNear,
       totalPaidNear,
       consumerSurplusNear,
-      commitmentHash: buyerCommitMap.get(b.buyerId) ?? '',
+      commitmentHash: meta?.commitHash ?? '',
+      nep413SignatureHex: meta?.sigHex ?? '',
     };
   });
 
@@ -365,6 +451,7 @@ export async function runSealedBidSwarmAuction(params: {
     const grossRevenueNear = Number((unitsAwarded * uniformClearingPriceNear).toFixed(4));
     return {
       sellerId: s.sellerId,
+      publicKeyNear: s.publicKeyNear,
       baseAskUnitPriceNear: s.baseAskUnitPriceNear,
       effectiveAskUnitPriceNear: s.effectiveAskUnitPriceNear,
       floorUnitPriceNear: s.floorUnitPriceNear,
@@ -374,6 +461,7 @@ export async function runSealedBidSwarmAuction(params: {
       reputationScore: s.reputationScore,
       teeAttested: s.teeAttested,
       commitmentHash: s.commitmentHash,
+      nep413SignatureHex: s.nep413SignatureHex,
     };
   });
 
@@ -398,6 +486,7 @@ export async function runSealedBidSwarmAuction(params: {
     totalBuyersSubmitted: params.buyers.length,
     totalSellersSubmitted: params.sellers.length,
     validCommitmentsVerified: commitments.filter((c) => c.revealVerified).length,
+    validNep413SignaturesVerified: commitments.filter((c) => c.nep413Verified).length,
     rejectedCommitments: commitments.filter((c) => !c.revealVerified).length,
     demandPoolingActive,
     pooledDiscountBpsApplied,

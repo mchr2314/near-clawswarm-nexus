@@ -1,6 +1,6 @@
-# ClawSwarm Nexus — Autonomous Contractor & Business Policy Configuration
+# VeriPact (ClawSwarm Nexus v2.0) — Autonomous Contractor & Business Policy Configuration
 agent:
-  accountId: "contractor.clawswarm.near"
+  accountId: "contractor.veripact.near"
   networkId: "mainnet"
   rpcEndpoint: "https://free.rpc.fastnear.com"
   oneClickEndpoint: "https://1click.chaindefuser.com"

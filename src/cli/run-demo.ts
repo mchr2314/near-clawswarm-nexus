@@ -1,26 +1,56 @@
-// ClawSwarm Nexus — CLI End-to-End Live Telemetry & Execution Demo
-// Runs the complete Contractor Agent + 20x5 Sealed-Bid Swarm + Live RPC Firewall + 1Click Quote loop
+// VeriPact (ClawSwarm Nexus v2.0) — CLI End-to-End Live Telemetry & Execution Demo
+// Reads config.yaml directly from disk and supports CLI overrides (--kill-switch, --budget, --max-daily)
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { runContractorWorkflow } from '../core/contractor-agent.js';
+import {
+  BusinessPolicyConfig,
+  runContractorWorkflow,
+} from '../core/contractor-agent.js';
 
 async function main() {
   console.log('========================================================================');
-  console.log(' CLAWSWARM NEXUS — VERIFIABLE CONTRACTOR AGENT & SWARM CLEARINGHOUSE');
+  console.log(' VERIPACT (CLAWSWARM NEXUS v2.0) — NEP-413 AGENT & SWARM CLEARINGHOUSE');
   console.log('========================================================================');
 
+  const configPath = join(process.cwd(), 'config.yaml');
+  const configYamlText = existsSync(configPath)
+    ? readFileSync(configPath, 'utf-8')
+    : undefined;
+
+  const args = process.argv.slice(2);
+  const policyOverrides: Partial<BusinessPolicyConfig> = {};
+  let clientGrossBudgetNear = 18.5;
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--kill-switch') {
+      policyOverrides.killSwitchActive = true;
+    } else if (args[i] === '--budget' && args[i + 1]) {
+      clientGrossBudgetNear = Number(args[i + 1]);
+      i++;
+    } else if (args[i] === '--max-daily' && args[i + 1]) {
+      policyOverrides.maxDailySpendNear = Number(args[i + 1]);
+      i++;
+    }
+  }
+
   const startMs = Date.now();
-  const report = await runContractorWorkflow();
+  const report = await runContractorWorkflow({
+    configYamlText,
+    policyOverrides,
+    clientGrossBudgetNear,
+  });
   const elapsedMs = Date.now() - startMs;
 
-  console.log(`\n[1] Agent Identity & Scoped FunctionCall Key:`);
+  console.log(`\n[1] Agent Identity, NEP-413 Signer & Scoped FunctionCall Key (Loaded from config.yaml):`);
   console.log(`    Account ID       : ${report.agentAccountId}`);
   console.log(`    Public Key (NEAR): ${report.agentPublicKeyNear}`);
+  console.log(`    Policy Constraints: KillSwitch=${report.policy.killSwitchActive} | MaxDaily=${report.policy.maxDailySpendNear} NEAR | MaxTask=${report.policy.maxSingleTaskNear} NEAR`);
   console.log(`    NEAR.AI Catalog  : ${report.nearAiTelemetry.totalModels} models (${report.nearAiTelemetry.confidentialTeeModels} TEE Confidential / ${report.nearAiTelemetry.standardProxyModels} Proxy) [${report.nearAiTelemetry.source}]`);
 
-  console.log(`\n[2] 20-Buyer x 5-Seller Commit-Reveal Sealed-Bid Swarm Market:`);
-  console.log(`    Commitments Valid: ${report.swarmAuction.validCommitmentsVerified}/${report.swarmAuction.totalBuyersSubmitted + report.swarmAuction.totalSellersSubmitted} SHA-256 commitments verified`);
+  console.log(`\n[2] 20-Buyer x 5-Seller NEP-413 Signed Commit-Reveal Swarm Clearinghouse:`);
+  console.log(`    SHA-256 Commits  : ${report.swarmAuction.validCommitmentsVerified}/25 verified`);
+  console.log(`    NEP-413 Ed25519  : ${report.swarmAuction.validNep413SignaturesVerified}/25 independent agent signatures verified`);
   console.log(`    Demand Pooling   : ${report.swarmAuction.demandPoolingActive ? 'ACTIVE' : 'INACTIVE'} (${report.swarmAuction.pooledDiscountBpsApplied} bps bulk solver discount unlocked)`);
   console.log(`    Cleared Volume   : ${report.swarmAuction.totalClearedUnits} units @ Uniform Clearing Price ${report.swarmAuction.uniformClearingPriceNear.toFixed(4)} NEAR/unit`);
   console.log(`    Vickrey Reference: ${report.swarmAuction.vickreyReferencePriceNear.toFixed(4)} NEAR/unit | Buyer Surplus Saved: ${report.swarmAuction.totalBuyerSurplusNear.toFixed(4)} NEAR`);
@@ -28,11 +58,11 @@ async function main() {
   console.log(`\n[3] Make-vs-Buy & Single-Round Counter-Offer Negotiation (4 Subtasks):`);
   for (const n of report.negotiations) {
     console.log(
-      `    - [${n.subtaskId}] ${n.outcome.padEnd(24)} | Selected: ${n.finalSelectedSellerId.padEnd(28)} | Cost: ${n.finalTotalCostNear.toFixed(4)} NEAR (Saved: ${n.savingsVsInitialNear.toFixed(4)} NEAR)`
+      `    - [${n.subtaskId}] ${n.outcome.padEnd(24)} | Selected: ${n.finalSelectedSellerId.padEnd(32)} | Cost: ${n.finalTotalCostNear.toFixed(4)} NEAR (Saved: ${n.savingsVsInitialNear.toFixed(4)} NEAR)`
     );
   }
 
-  console.log(`\n[4] Live NEAR RPC Counterparty Risk Scorer & Scoped Key Guard:`);
+  console.log(`\n[4] Live NEAR RPC Counterparty Risk Scorer & Borsh FunctionCall Key Guard:`);
   for (let i = 0; i < report.firewallAssessments.length; i++) {
     const fw = report.firewallAssessments[i];
     const kg = report.keyGuardVerdicts[i];
@@ -41,7 +71,7 @@ async function main() {
     );
   }
 
-  console.log(`\n[5] Live NEAR Intents 1Click Cross-Chain Dry Quotes:`);
+  console.log(`\n[5] Live NEAR Intents 1Click Cross-Chain Dry Quotes (3 Chains):`);
   for (const q of report.oneClickQuotes) {
     console.log(
       `    - [${q.routeId}] ${q.amountInNear.toFixed(4)} wNEAR -> ${q.amountOutFormatted} USDC (${q.destinationChain.toUpperCase()}) | HTTP ${q.httpStatus} | Correlation: ${q.correlationId} [${q.source}]`
@@ -56,10 +86,10 @@ async function main() {
   console.log(`    -> 20% Solver Rebate Pool: ${report.ledger.distributions.specialistSolverPoolNear.toFixed(4)} NEAR`);
   console.log(`    -> 10% Risk Reserve Vault: ${report.ledger.distributions.riskReserveVaultNear.toFixed(4)} NEAR`);
 
-  console.log(`\n[7] Hash-Chained Ed25519 Signed Receipts (${report.receipts.length} receipts):`);
+  console.log(`\n[7] NEP-413 Signed & Hash-Chained Ed25519 Receipts (${report.receipts.length} receipts):`);
   for (const r of report.receipts) {
     console.log(
-      `    #${r.sequence} [${r.stage.padEnd(25)}] Hash: ${r.receiptHash.slice(0, 16)}... Sig: ${r.signatureHex.slice(0, 16)}...`
+      `    #${r.sequence} [${r.stage.padEnd(25)}] NEP-413 Digest: ${r.nep413DigestHex.slice(0, 14)}... Sig: ${r.signatureHex.slice(0, 14)}...`
     );
   }
 

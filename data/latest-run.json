@@ -1,15 +1,22 @@
 {
-  "runId": "run-1794581940227",
-  "executedAtIso": "2026-11-13T14:59:00.227Z",
-  "agentAccountId": "contractor.clawswarm.near",
-  "agentPublicKeyNear": "ed25519:6cu4RXJDbo8Mpaw3ktEmR86jMCFkdPKb1z3ThpaPWFqV",
+  "runId": "run-1794582657757",
+  "executedAtIso": "2026-11-13T15:10:57.757Z",
+  "agentAccountId": "contractor.veripact.near",
+  "agentPublicKeyNear": "ed25519:HxD7q4XoUEun2SrpzwZwY8eBSRAzMx4cmVYCDa7Qypwe",
   "policy": {
-    "accountId": "contractor.clawswarm.near",
+    "accountId": "contractor.veripact.near",
     "killSwitchActive": false,
     "maxDailySpendNear": 50,
     "maxSingleTaskNear": 12,
     "minGrossMarginPct": 18,
     "negotiationDiscountTargetPct": 12,
+    "allowedMethods": [
+      "ft_transfer_call",
+      "execute_intent",
+      "settle_batch",
+      "storage_deposit"
+    ],
+    "allowanceNear": 25,
     "revenueSplitBps": {
       "operatorTreasury": 7000,
       "specialistSolverPool": 2000,
@@ -80,11 +87,12 @@
     }
   ],
   "swarmAuction": {
-    "auctionId": "auc-clawswarm-epoch-2026-01",
+    "auctionId": "auc-veripact-epoch-2026-01",
     "subtaskCategory": "crosschain_intent_routing",
     "totalBuyersSubmitted": 20,
     "totalSellersSubmitted": 5,
     "validCommitmentsVerified": 25,
+    "validNep413SignaturesVerified": 25,
     "rejectedCommitments": 0,
     "demandPoolingActive": true,
     "pooledDiscountBpsApplied": 1000,
@@ -101,175 +109,250 @@
       {
         "participantId": "buyer-1.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "fa173ef5d980f8ae65426471c7a6988cfa17bd7a065e124bdbb04d358cf8afb0",
+        "publicKeyNear": "ed25519:3eJaRgjLJfGyNkU6t17tyDkQVnXfw4RQ4ka7GYstRU6d",
+        "commitmentHash": "1e2787cc7219926135f75f51fce734450a8c67a81a26994c1c440102e5569d45",
+        "nep413SignatureHex": "8fd5dcefa6a8b1a61fd015e450746c07d13ca08a4c4188a947e9b9619e6f0f36cfb07f24226b5da317a7dee21f88b4b609e264462b22296b5beb06edab6adf01",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-2.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "fb3a7889b005243a20ed1c7ba50c447effa2494f2d8916cfc20bd406600d46af",
+        "publicKeyNear": "ed25519:93KHSMZ3eQQtBg93S14QZesxXWYEoY6Q1vUtARCffu7j",
+        "commitmentHash": "5ff22952354e24d0c95fbe2db976f3b2384bdfac13a79cd6bbd91fecc6e7a45d",
+        "nep413SignatureHex": "36f34cf4c92685089304ad96fa322f375a3cb761def5a8558511bf1d703454932d9662ca22fdf67897f9f8b7b6551552b3b4e0551c6ddeaf284bcafac6a72b0b",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-3.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "760252caf04525d4432a1275ee7e59aa748c89bed857be8636de5e8dba551cbb",
+        "publicKeyNear": "ed25519:6DLNHMcZtBWHgJh8hixCWbFTPkzwyrQxLLrK5QaxkRDK",
+        "commitmentHash": "d7274635f2f91d1f4b1c6f400db22eb48cec93413ad7390fab69c00a33c49825",
+        "nep413SignatureHex": "448292d198de255104b1e61fee7f344fc14fa4ef397c32d3896b020d529a3e07237b6549341471fa1c9f92b785926c18b3900b46efdcf26fdb14c92caca2e30a",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-4.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "6b16d745ef4eb89fb6b86396aa2c86e845e175b4532a57bc6b252ac02ffbfd44",
+        "publicKeyNear": "ed25519:8LXDayFgRvYL1hr5APsMZgroADrJYUxrkpbcbtPomskt",
+        "commitmentHash": "897b1dc0e3f0b29b17193558312d7caeffb6982e13679f2d321fff22e21cb891",
+        "nep413SignatureHex": "4567f25c62e7b690f238e3ea2ffc725e1a1adaa60a67376e4332b745898771a0f527ae067e34dac857b8e8c9b762d57b29c5b901879427b3441f2dae1cc11d06",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-5.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "e566a5570fc9c17defacb875e0e3afc418c6e264af918b3bc2d23aad63f2bb35",
+        "publicKeyNear": "ed25519:4H1LvGfT824RyqhZteWvSbUhXTfQ4yjSuCe5dvpTpWf8",
+        "commitmentHash": "0ccbd1cab0a5f88eaef702698e37e54193790f2405bf35b872f832c8ec7bcbce",
+        "nep413SignatureHex": "c5f238bd9ab235b7db301573cc7fa2bce84d7f90fc1f94ee0e195e17dadebac3d7c2701de725263efae7e60f42ac88e60f70cc94e789070bb6eccb05f7e85f07",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-6.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "c3de867a2e35047e05cf0404d0cb2e889f595dbedd4ac44adb4ae456313170e6",
+        "publicKeyNear": "ed25519:CADdX5ZNgmMRRYoauKhyPLiRL5YG12PPX5tgbs34JMfd",
+        "commitmentHash": "4913f3af5b3b2fb8d00baa1d92a5082af14dac22861295837eaf6b8637cfc10d",
+        "nep413SignatureHex": "7ce429c28b1a6856a24faa26691c4bab6a095cc4c2d0737074479675800f6dec498f4020f7d7a16b89abf5436b74e192c9286f688be13a0aa1cdd9abbcb07100",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-7.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "f230b8031b2144306306ce523cc9809568e9c2ec40598f4814a3b0500427cd53",
+        "publicKeyNear": "ed25519:2zcXMqsYuFdtBKTARoByF6md6qfuAL3Ws9F7SdNetTko",
+        "commitmentHash": "4c0e847b9e05bca571422096d645bcb8fc1a586a5ec4420aa5174de4c9982946",
+        "nep413SignatureHex": "294e65aa647f5e4bebb99e6d3f02d8f779682a2621de6cdeb87fcd5fc7b48f4f573b5fa7abe6f0030b3f6065cf23a96ec5ddeeabec0a1ad8ec1f6ac5f31d2305",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-8.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "cc3fd20c59b235131c4d22c86afcbb47c92b85b946c523b4773eb2b87ae5ab1f",
+        "publicKeyNear": "ed25519:DCPGFmSPobT2SCp6VVrpDaBjCRfjQszeAMsqZqnmc9Jj",
+        "commitmentHash": "e009cc4d2d33c1b2855ba6469959271302f165421abd0013a8e477abf6392df9",
+        "nep413SignatureHex": "fd190d09042b69e6570f13a06d8c0248e470664e6f0e81ab515c887551f5f09556a8f097f9e04b1797174a1e4e8312a1810e05598fa87def961db6768c39fa03",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-9.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "b2893831a34e6239aa292a8b81330a80642f66fdb69e974fa49cb546d3a39741",
+        "publicKeyNear": "ed25519:294UuJegzoM5FCyHMnCoHhZokTMvNjUz16CzUydcSN4A",
+        "commitmentHash": "ef81e0a0b907d80c6692f6725bcd9312fdacf52999d7a3c8f969a99c4fbe5bda",
+        "nep413SignatureHex": "e01e31699bfee9572096ae428661732069f85950d6c7801a062ae87612a38c5d99f6b10151b6a0742842555848be4233774735fbe5a6ed8233c646e7bc48810d",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-10.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "05d4628273f3fe0393c4db5c5ebf31ccf5a8b0f3b967b6e5c2ca497febd03537",
+        "publicKeyNear": "ed25519:3ryY9oktb2LR6NjWcN3kWVXSJ9RcmKJX35hV93aWt5u2",
+        "commitmentHash": "bbced8ee807b3cefb8416b57cb9682be9d10a4ada8f22f2e2e9c379a6b28a11a",
+        "nep413SignatureHex": "723c45a242bc78db0e4c60090bfee2a05e741414fcfa4f6e766496ec677a5dbca03b596df34be8c183aac5ba85371b7716c6151f5d3681699b9e491069749b01",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-11.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "7d7779399080868311b64636ba4df948e66e51dd70bbe0eb0abd5f9c029f440c",
+        "publicKeyNear": "ed25519:H3KJomcpZpi45z8t72R1FWodkBE4CM6swaCgPM5MCN6S",
+        "commitmentHash": "ac660ea8bf46eb3559a5146e63e9ed0047ea5ac833ca7ba103dce5da33ed4902",
+        "nep413SignatureHex": "cf222817ddc8a2adfabb68501835dd4c1e35f479e14857490243962c574883b74ad25577a151138c8717386ccfd6f285954d4078d07f0107787385f118e92a05",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-12.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "30da3a2a50461c33c346087533f4bd01764c182a172df76d6286457525dbb0a7",
+        "publicKeyNear": "ed25519:9eVhPb2tGrhc4EzMtDKsU4H7iQrUjtLS7Kw1jDiWVqGJ",
+        "commitmentHash": "3c11930f7f6277b67eeff8831bc300d43a702aec34915ff5a8fb6f24da5448d7",
+        "nep413SignatureHex": "1bafb6adba0088faecba3cc40089240938a44e848444d63508a99cb330b0fa4d90947f62e641381b1105bb10b1f67f5a71c444ebce514da6bb280e53e69fbc01",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-13.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "0e4cfcdd50e66deb77f3ced3f55d90f54d1d640a3601c2fb93fe17e1eaa0a829",
+        "publicKeyNear": "ed25519:GSa4HmqieEGh4gK33R5A5X7LoGSsUV6wNkZQiq964NBP",
+        "commitmentHash": "125e3f88bad3e7c3321adfb39ecefa295f62803d58fcb38d5b01618ad92b6ee3",
+        "nep413SignatureHex": "da5277bea21adec464e6986483903792e7007ab895d3823e1566197b273224cd7a0d2eb069ff2a9a4a581eccaffeeb2eb7e5dee955c1494d9733bf3cb7a2e00f",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-14.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "1158d8f6203b1dd6f75232e3ca457e71f1962bc0f57b276fe44a1c2e28b80da1",
+        "publicKeyNear": "ed25519:GWSptxgzRCHSuh7jgyhN1Uw6CLxqRc4utXDREwABcMkW",
+        "commitmentHash": "3491d9d9f68d1c456a0a0c6156b86647de134a4f7a4620258422a223c2b51b29",
+        "nep413SignatureHex": "22624e607d7f07f86b03649ff17f1e1493fd465a57c0aa854d93373676944121080d5a10563b6b7fcae63660792c222b7eacab6995e418755225ad9b2afca40f",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-15.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "1ec92f6aba6ab91d61b6138eba99b8471efe3e4413fcf278339c2f9ebbf7d7b8",
+        "publicKeyNear": "ed25519:5qmNDca2KcPkq8SHTktyZx711vxM3Wv613gsPJmKLM9B",
+        "commitmentHash": "56200d91f4c82e4c1721531df3b768a818db39c67db4ba74d0d2bc462c66939f",
+        "nep413SignatureHex": "9152cc9c8bae1dbe447b7e5519de329456e0eb05ca515cd741ccbb35fe3b5fe4dda9ce5b63cf733eb1165911770e42b603022de5369a5622c7ede96da494cf0c",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-16.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "e9f816a9809c70cb72ed9ab3459f595b338a4a8c313da7dbbc78248dbeb04f9c",
+        "publicKeyNear": "ed25519:C8fgziNSdohM1Prz5AkG1Z7r9Ft47JAJDGquzkx3e9tE",
+        "commitmentHash": "346c94de3e170873bffc62cf384faa56f4b23f1cfc8d578374f027cbc5a77558",
+        "nep413SignatureHex": "1b69c0058cb66265f4c1ae6874f27a2c03ec184b2eafc092f5c7588fd8e5af7861c403ba395df3889dd877afe24dd68f96d72a1a564c50b7816c0e17f9e8630d",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-17.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "08db8d7bbcf7dcaa0e75e01a901d75f2e2c2d2ba0f7a5c52a8eeee7ea3f86bcc",
+        "publicKeyNear": "ed25519:GHJGE7bzBVXZNJQtYWg2X7423modeYcxifiZ53b6tEj2",
+        "commitmentHash": "074d2260e120835e04445122c7290e0708918f144caf5d2921441c5866d8f84b",
+        "nep413SignatureHex": "f3e9c4df5f01a5fff3dd771d1f7b51b9743c5de6139287772e6140de9e934e3ea33c64d5ab464501e0746837316d05c39874ddb9102c76e055267fdbfcad3904",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-18.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "af8a5c86a4215afe5f1d895df5c78420a60382d55e156fc0ac614c2ff670fc69",
+        "publicKeyNear": "ed25519:2VMRW4gjLgGChVrCrxygRdUbLuY89QYDu3qnsgc23hZN",
+        "commitmentHash": "7984ac66619cfa50fc21715f866e6d4eaecdfadafa83a7d21dcfcc35b54200e9",
+        "nep413SignatureHex": "567bfc050b0cc283934711bf1c42fba47f5733528000822664160ac5d0550022f58c71ed3ca2d461ee92717b429f058eca6d1b35f9f37d62641f38160818d200",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-19.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "4d93b4c3f7f280d03bbf7cdd36eae9bc53dcf7c765526c1ca051cc940c93e100",
+        "publicKeyNear": "ed25519:67pZjiPALjdSSq1xRxFHqbi7FAeWroj1sEqTxJw4UFY7",
+        "commitmentHash": "0d7060cdcbcacfc428744b0ab87c317f7f396de3b2f971fbcac9494f4c64336c",
+        "nep413SignatureHex": "9fb84c7800525b4377911db48013c95f421c64e05b8f9d9df0c71ead50f0d97ae484f6a582feba91c18f21319743dc657acffa97f9922ac081ec072b17d12000",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "buyer-20.swarm.testnet",
         "role": "BUYER",
-        "commitmentHash": "7aca0dbe47fb1c759a86cbfc458287b958364cd8aad9c1ce3ff27d6bbef376e7",
+        "publicKeyNear": "ed25519:HrQR6PrfjyuXwdjWbTKS2UzAB5foG1LPpyKGKnGDEm2Z",
+        "commitmentHash": "b40f1b104abfdc65c8482c70fb1080074262b8bb26bf10efd52f2d78ff9efa9e",
+        "nep413SignatureHex": "4ac96e9d12bb13c9e759a4d27574e131220f2f7ab9aa3db0a796bd5df6a222f5bf86cb9b9b75cef8fe249e9c7b525a3d4ecf6914d53741081b947e45fff3cb03",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "seller-1.swarm.testnet",
         "role": "SELLER",
-        "commitmentHash": "a62de32dcb113bf12bb0ece3ed31eda6202a2a8fc0de2149ee72ca5030544c06",
+        "publicKeyNear": "ed25519:Ay1gvF5qTmtEsFVKFz8Ue3MrbnZ2wgtkAUiBXppcffmp",
+        "commitmentHash": "e44d4ce29e841560cb2537e501acc9009a8d0c1014a0b6b9816243e55be5142a",
+        "nep413SignatureHex": "7ccee8ba1053e402c5bd1cf850d9bcc47d490dd082d4eec82927a176241fbddf888d2fbad7b7bb85ff5068aed3d8be6b905258972cb57efa207b13971251910e",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "seller-2.swarm.testnet",
         "role": "SELLER",
-        "commitmentHash": "8beb2229f4bd784272259d55559ac4f10f6bab7d31cba81d098c7fc0e49a164c",
+        "publicKeyNear": "ed25519:9m4ZV5qL19d4g5HYWiCgYw8Rk2HsaXMrK9KXQRRvYfAD",
+        "commitmentHash": "59ded0e62f6cdf6686350e175d6934916cce64fccedee29dd11f7991fb8f8681",
+        "nep413SignatureHex": "a99c3690ca9b15d9f9a57c5c59c0993c044a9b8b5bc9346c9b8c903ae9e2cca91dbbb7f941390fff5054a2858a7fd4b03bf7d6eea1a2c1d0be8d34eaf5702d05",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "seller-3.swarm.testnet",
         "role": "SELLER",
-        "commitmentHash": "ef51502f77307cdc886df14ddc651aa10f59c160527b297d9939932126d6b86d",
+        "publicKeyNear": "ed25519:CE3ZCuie59htBZqLSR4Z1GP17wfMgn2yY5eMLf5Nvet2",
+        "commitmentHash": "8a2af925fb9e2093787581ec5c7754444d872b437b901a91caeeb177b974dbf5",
+        "nep413SignatureHex": "1a7e8db1af1030052c7137dba92a12696a77a61dc29328dc3c11fd90cc8f0aa146dbc5616aab1dddca07e618d91abfc59e0463b2deb89fe44f17d27085e5d805",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "seller-4.swarm.testnet",
         "role": "SELLER",
-        "commitmentHash": "f4c4ecc6451115ed374ee7c1ffb2104248ee481f9c44602038e946cffba1f316",
+        "publicKeyNear": "ed25519:BBPkMDREiCZx9ay3bnVTd1oJ5WPMy2HqSjFCtsdoASEx",
+        "commitmentHash": "c823b2d7b67ef11db7cd3a3a2a3cb608e45b83419c4af7d00aa8afee8c339ab4",
+        "nep413SignatureHex": "5a34b1fbb17e7f79e97606e6e81c1e83d19c4c8cfc7d81f1bb7b2d43ffac20a8d7ad35828d5430b2883755a5b8956a4d626abd6e935a55da6a24f06ec18b2604",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       },
       {
         "participantId": "seller-5.swarm.testnet",
         "role": "SELLER",
-        "commitmentHash": "9c98d53319d6a682a257ce0efa5188cb946042557158421c4f7399b09c4470fc",
+        "publicKeyNear": "ed25519:EzSLkehCVE4sRpUfyht5bZN1vAxPYhWzmKJUVCHGKe3d",
+        "commitmentHash": "89a0f8a71d72a43905a0a4ed6bb326631ba20817dfdbe356414ea093919e9912",
+        "nep413SignatureHex": "896eab5b995e5265a957189717b8e14063c68aa55d6ca31a00b5b25ee3dda2420f14b4ae8d98ab7c380b433a22c772a100f41afc46a148159a5bae28203aab03",
+        "nep413Verified": true,
         "revealed": true,
         "revealVerified": true
       }
@@ -277,208 +360,249 @@
     "buyerAllocations": [
       {
         "buyerId": "buyer-1.swarm.testnet",
+        "publicKeyNear": "ed25519:3eJaRgjLJfGyNkU6t17tyDkQVnXfw4RQ4ka7GYstRU6d",
         "unitsRequested": 2,
         "unitsFilled": 2,
         "maxUnitPriceNear": 0.68,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.8694,
         "consumerSurplusNear": 0.4906,
-        "commitmentHash": "fa173ef5d980f8ae65426471c7a6988cfa17bd7a065e124bdbb04d358cf8afb0"
+        "commitmentHash": "1e2787cc7219926135f75f51fce734450a8c67a81a26994c1c440102e5569d45",
+        "nep413SignatureHex": "8fd5dcefa6a8b1a61fd015e450746c07d13ca08a4c4188a947e9b9619e6f0f36cfb07f24226b5da317a7dee21f88b4b609e264462b22296b5beb06edab6adf01"
       },
       {
         "buyerId": "buyer-2.swarm.testnet",
+        "publicKeyNear": "ed25519:93KHSMZ3eQQtBg93S14QZesxXWYEoY6Q1vUtARCffu7j",
         "unitsRequested": 3,
         "unitsFilled": 3,
         "maxUnitPriceNear": 0.664,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 1.3041,
         "consumerSurplusNear": 0.6879,
-        "commitmentHash": "fb3a7889b005243a20ed1c7ba50c447effa2494f2d8916cfc20bd406600d46af"
+        "commitmentHash": "5ff22952354e24d0c95fbe2db976f3b2384bdfac13a79cd6bbd91fecc6e7a45d",
+        "nep413SignatureHex": "36f34cf4c92685089304ad96fa322f375a3cb761def5a8558511bf1d703454932d9662ca22fdf67897f9f8b7b6551552b3b4e0551c6ddeaf284bcafac6a72b0b"
       },
       {
         "buyerId": "buyer-3.swarm.testnet",
+        "publicKeyNear": "ed25519:6DLNHMcZtBWHgJh8hixCWbFTPkzwyrQxLLrK5QaxkRDK",
         "unitsRequested": 1,
         "unitsFilled": 1,
         "maxUnitPriceNear": 0.648,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.4347,
         "consumerSurplusNear": 0.2133,
-        "commitmentHash": "760252caf04525d4432a1275ee7e59aa748c89bed857be8636de5e8dba551cbb"
+        "commitmentHash": "d7274635f2f91d1f4b1c6f400db22eb48cec93413ad7390fab69c00a33c49825",
+        "nep413SignatureHex": "448292d198de255104b1e61fee7f344fc14fa4ef397c32d3896b020d529a3e07237b6549341471fa1c9f92b785926c18b3900b46efdcf26fdb14c92caca2e30a"
       },
       {
         "buyerId": "buyer-4.swarm.testnet",
+        "publicKeyNear": "ed25519:8LXDayFgRvYL1hr5APsMZgroADrJYUxrkpbcbtPomskt",
         "unitsRequested": 2,
         "unitsFilled": 2,
         "maxUnitPriceNear": 0.632,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.8694,
         "consumerSurplusNear": 0.3946,
-        "commitmentHash": "6b16d745ef4eb89fb6b86396aa2c86e845e175b4532a57bc6b252ac02ffbfd44"
+        "commitmentHash": "897b1dc0e3f0b29b17193558312d7caeffb6982e13679f2d321fff22e21cb891",
+        "nep413SignatureHex": "4567f25c62e7b690f238e3ea2ffc725e1a1adaa60a67376e4332b745898771a0f527ae067e34dac857b8e8c9b762d57b29c5b901879427b3441f2dae1cc11d06"
       },
       {
         "buyerId": "buyer-5.swarm.testnet",
+        "publicKeyNear": "ed25519:4H1LvGfT824RyqhZteWvSbUhXTfQ4yjSuCe5dvpTpWf8",
         "unitsRequested": 3,
         "unitsFilled": 3,
         "maxUnitPriceNear": 0.616,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 1.3041,
         "consumerSurplusNear": 0.5439,
-        "commitmentHash": "e566a5570fc9c17defacb875e0e3afc418c6e264af918b3bc2d23aad63f2bb35"
+        "commitmentHash": "0ccbd1cab0a5f88eaef702698e37e54193790f2405bf35b872f832c8ec7bcbce",
+        "nep413SignatureHex": "c5f238bd9ab235b7db301573cc7fa2bce84d7f90fc1f94ee0e195e17dadebac3d7c2701de725263efae7e60f42ac88e60f70cc94e789070bb6eccb05f7e85f07"
       },
       {
         "buyerId": "buyer-6.swarm.testnet",
+        "publicKeyNear": "ed25519:CADdX5ZNgmMRRYoauKhyPLiRL5YG12PPX5tgbs34JMfd",
         "unitsRequested": 1,
         "unitsFilled": 1,
         "maxUnitPriceNear": 0.6,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.4347,
         "consumerSurplusNear": 0.1653,
-        "commitmentHash": "c3de867a2e35047e05cf0404d0cb2e889f595dbedd4ac44adb4ae456313170e6"
+        "commitmentHash": "4913f3af5b3b2fb8d00baa1d92a5082af14dac22861295837eaf6b8637cfc10d",
+        "nep413SignatureHex": "7ce429c28b1a6856a24faa26691c4bab6a095cc4c2d0737074479675800f6dec498f4020f7d7a16b89abf5436b74e192c9286f688be13a0aa1cdd9abbcb07100"
       },
       {
         "buyerId": "buyer-7.swarm.testnet",
+        "publicKeyNear": "ed25519:2zcXMqsYuFdtBKTARoByF6md6qfuAL3Ws9F7SdNetTko",
         "unitsRequested": 2,
         "unitsFilled": 2,
         "maxUnitPriceNear": 0.584,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.8694,
         "consumerSurplusNear": 0.2986,
-        "commitmentHash": "f230b8031b2144306306ce523cc9809568e9c2ec40598f4814a3b0500427cd53"
+        "commitmentHash": "4c0e847b9e05bca571422096d645bcb8fc1a586a5ec4420aa5174de4c9982946",
+        "nep413SignatureHex": "294e65aa647f5e4bebb99e6d3f02d8f779682a2621de6cdeb87fcd5fc7b48f4f573b5fa7abe6f0030b3f6065cf23a96ec5ddeeabec0a1ad8ec1f6ac5f31d2305"
       },
       {
         "buyerId": "buyer-8.swarm.testnet",
+        "publicKeyNear": "ed25519:DCPGFmSPobT2SCp6VVrpDaBjCRfjQszeAMsqZqnmc9Jj",
         "unitsRequested": 3,
         "unitsFilled": 3,
         "maxUnitPriceNear": 0.568,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 1.3041,
         "consumerSurplusNear": 0.3999,
-        "commitmentHash": "cc3fd20c59b235131c4d22c86afcbb47c92b85b946c523b4773eb2b87ae5ab1f"
+        "commitmentHash": "e009cc4d2d33c1b2855ba6469959271302f165421abd0013a8e477abf6392df9",
+        "nep413SignatureHex": "fd190d09042b69e6570f13a06d8c0248e470664e6f0e81ab515c887551f5f09556a8f097f9e04b1797174a1e4e8312a1810e05598fa87def961db6768c39fa03"
       },
       {
         "buyerId": "buyer-9.swarm.testnet",
+        "publicKeyNear": "ed25519:294UuJegzoM5FCyHMnCoHhZokTMvNjUz16CzUydcSN4A",
         "unitsRequested": 1,
         "unitsFilled": 1,
         "maxUnitPriceNear": 0.552,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.4347,
         "consumerSurplusNear": 0.1173,
-        "commitmentHash": "b2893831a34e6239aa292a8b81330a80642f66fdb69e974fa49cb546d3a39741"
+        "commitmentHash": "ef81e0a0b907d80c6692f6725bcd9312fdacf52999d7a3c8f969a99c4fbe5bda",
+        "nep413SignatureHex": "e01e31699bfee9572096ae428661732069f85950d6c7801a062ae87612a38c5d99f6b10151b6a0742842555848be4233774735fbe5a6ed8233c646e7bc48810d"
       },
       {
         "buyerId": "buyer-10.swarm.testnet",
+        "publicKeyNear": "ed25519:3ryY9oktb2LR6NjWcN3kWVXSJ9RcmKJX35hV93aWt5u2",
         "unitsRequested": 2,
         "unitsFilled": 2,
         "maxUnitPriceNear": 0.536,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.8694,
         "consumerSurplusNear": 0.2026,
-        "commitmentHash": "05d4628273f3fe0393c4db5c5ebf31ccf5a8b0f3b967b6e5c2ca497febd03537"
+        "commitmentHash": "bbced8ee807b3cefb8416b57cb9682be9d10a4ada8f22f2e2e9c379a6b28a11a",
+        "nep413SignatureHex": "723c45a242bc78db0e4c60090bfee2a05e741414fcfa4f6e766496ec677a5dbca03b596df34be8c183aac5ba85371b7716c6151f5d3681699b9e491069749b01"
       },
       {
         "buyerId": "buyer-11.swarm.testnet",
+        "publicKeyNear": "ed25519:H3KJomcpZpi45z8t72R1FWodkBE4CM6swaCgPM5MCN6S",
         "unitsRequested": 3,
         "unitsFilled": 3,
         "maxUnitPriceNear": 0.52,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 1.3041,
         "consumerSurplusNear": 0.2559,
-        "commitmentHash": "7d7779399080868311b64636ba4df948e66e51dd70bbe0eb0abd5f9c029f440c"
+        "commitmentHash": "ac660ea8bf46eb3559a5146e63e9ed0047ea5ac833ca7ba103dce5da33ed4902",
+        "nep413SignatureHex": "cf222817ddc8a2adfabb68501835dd4c1e35f479e14857490243962c574883b74ad25577a151138c8717386ccfd6f285954d4078d07f0107787385f118e92a05"
       },
       {
         "buyerId": "buyer-12.swarm.testnet",
+        "publicKeyNear": "ed25519:9eVhPb2tGrhc4EzMtDKsU4H7iQrUjtLS7Kw1jDiWVqGJ",
         "unitsRequested": 1,
         "unitsFilled": 1,
         "maxUnitPriceNear": 0.504,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.4347,
         "consumerSurplusNear": 0.0693,
-        "commitmentHash": "30da3a2a50461c33c346087533f4bd01764c182a172df76d6286457525dbb0a7"
+        "commitmentHash": "3c11930f7f6277b67eeff8831bc300d43a702aec34915ff5a8fb6f24da5448d7",
+        "nep413SignatureHex": "1bafb6adba0088faecba3cc40089240938a44e848444d63508a99cb330b0fa4d90947f62e641381b1105bb10b1f67f5a71c444ebce514da6bb280e53e69fbc01"
       },
       {
         "buyerId": "buyer-13.swarm.testnet",
+        "publicKeyNear": "ed25519:GSa4HmqieEGh4gK33R5A5X7LoGSsUV6wNkZQiq964NBP",
         "unitsRequested": 2,
         "unitsFilled": 2,
         "maxUnitPriceNear": 0.488,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.8694,
         "consumerSurplusNear": 0.1066,
-        "commitmentHash": "0e4cfcdd50e66deb77f3ced3f55d90f54d1d640a3601c2fb93fe17e1eaa0a829"
+        "commitmentHash": "125e3f88bad3e7c3321adfb39ecefa295f62803d58fcb38d5b01618ad92b6ee3",
+        "nep413SignatureHex": "da5277bea21adec464e6986483903792e7007ab895d3823e1566197b273224cd7a0d2eb069ff2a9a4a581eccaffeeb2eb7e5dee955c1494d9733bf3cb7a2e00f"
       },
       {
         "buyerId": "buyer-14.swarm.testnet",
+        "publicKeyNear": "ed25519:GWSptxgzRCHSuh7jgyhN1Uw6CLxqRc4utXDREwABcMkW",
         "unitsRequested": 3,
         "unitsFilled": 3,
         "maxUnitPriceNear": 0.472,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 1.3041,
         "consumerSurplusNear": 0.1119,
-        "commitmentHash": "1158d8f6203b1dd6f75232e3ca457e71f1962bc0f57b276fe44a1c2e28b80da1"
+        "commitmentHash": "3491d9d9f68d1c456a0a0c6156b86647de134a4f7a4620258422a223c2b51b29",
+        "nep413SignatureHex": "22624e607d7f07f86b03649ff17f1e1493fd465a57c0aa854d93373676944121080d5a10563b6b7fcae63660792c222b7eacab6995e418755225ad9b2afca40f"
       },
       {
         "buyerId": "buyer-15.swarm.testnet",
+        "publicKeyNear": "ed25519:5qmNDca2KcPkq8SHTktyZx711vxM3Wv613gsPJmKLM9B",
         "unitsRequested": 1,
         "unitsFilled": 1,
         "maxUnitPriceNear": 0.456,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.4347,
         "consumerSurplusNear": 0.0213,
-        "commitmentHash": "1ec92f6aba6ab91d61b6138eba99b8471efe3e4413fcf278339c2f9ebbf7d7b8"
+        "commitmentHash": "56200d91f4c82e4c1721531df3b768a818db39c67db4ba74d0d2bc462c66939f",
+        "nep413SignatureHex": "9152cc9c8bae1dbe447b7e5519de329456e0eb05ca515cd741ccbb35fe3b5fe4dda9ce5b63cf733eb1165911770e42b603022de5369a5622c7ede96da494cf0c"
       },
       {
         "buyerId": "buyer-16.swarm.testnet",
+        "publicKeyNear": "ed25519:C8fgziNSdohM1Prz5AkG1Z7r9Ft47JAJDGquzkx3e9tE",
         "unitsRequested": 2,
         "unitsFilled": 2,
         "maxUnitPriceNear": 0.44,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0.8694,
         "consumerSurplusNear": 0.0106,
-        "commitmentHash": "e9f816a9809c70cb72ed9ab3459f595b338a4a8c313da7dbbc78248dbeb04f9c"
+        "commitmentHash": "346c94de3e170873bffc62cf384faa56f4b23f1cfc8d578374f027cbc5a77558",
+        "nep413SignatureHex": "1b69c0058cb66265f4c1ae6874f27a2c03ec184b2eafc092f5c7588fd8e5af7861c403ba395df3889dd877afe24dd68f96d72a1a564c50b7816c0e17f9e8630d"
       },
       {
         "buyerId": "buyer-17.swarm.testnet",
+        "publicKeyNear": "ed25519:GHJGE7bzBVXZNJQtYWg2X7423modeYcxifiZ53b6tEj2",
         "unitsRequested": 3,
         "unitsFilled": 0,
         "maxUnitPriceNear": 0.424,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0,
         "consumerSurplusNear": 0,
-        "commitmentHash": "08db8d7bbcf7dcaa0e75e01a901d75f2e2c2d2ba0f7a5c52a8eeee7ea3f86bcc"
+        "commitmentHash": "074d2260e120835e04445122c7290e0708918f144caf5d2921441c5866d8f84b",
+        "nep413SignatureHex": "f3e9c4df5f01a5fff3dd771d1f7b51b9743c5de6139287772e6140de9e934e3ea33c64d5ab464501e0746837316d05c39874ddb9102c76e055267fdbfcad3904"
       },
       {
         "buyerId": "buyer-18.swarm.testnet",
+        "publicKeyNear": "ed25519:2VMRW4gjLgGChVrCrxygRdUbLuY89QYDu3qnsgc23hZN",
         "unitsRequested": 1,
         "unitsFilled": 0,
         "maxUnitPriceNear": 0.408,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0,
         "consumerSurplusNear": 0,
-        "commitmentHash": "af8a5c86a4215afe5f1d895df5c78420a60382d55e156fc0ac614c2ff670fc69"
+        "commitmentHash": "7984ac66619cfa50fc21715f866e6d4eaecdfadafa83a7d21dcfcc35b54200e9",
+        "nep413SignatureHex": "567bfc050b0cc283934711bf1c42fba47f5733528000822664160ac5d0550022f58c71ed3ca2d461ee92717b429f058eca6d1b35f9f37d62641f38160818d200"
       },
       {
         "buyerId": "buyer-19.swarm.testnet",
+        "publicKeyNear": "ed25519:67pZjiPALjdSSq1xRxFHqbi7FAeWroj1sEqTxJw4UFY7",
         "unitsRequested": 2,
         "unitsFilled": 0,
         "maxUnitPriceNear": 0.392,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0,
         "consumerSurplusNear": 0,
-        "commitmentHash": "4d93b4c3f7f280d03bbf7cdd36eae9bc53dcf7c765526c1ca051cc940c93e100"
+        "commitmentHash": "0d7060cdcbcacfc428744b0ab87c317f7f396de3b2f971fbcac9494f4c64336c",
+        "nep413SignatureHex": "9fb84c7800525b4377911db48013c95f421c64e05b8f9d9df0c71ead50f0d97ae484f6a582feba91c18f21319743dc657acffa97f9922ac081ec072b17d12000"
       },
       {
         "buyerId": "buyer-20.swarm.testnet",
+        "publicKeyNear": "ed25519:HrQR6PrfjyuXwdjWbTKS2UzAB5foG1LPpyKGKnGDEm2Z",
         "unitsRequested": 3,
         "unitsFilled": 0,
         "maxUnitPriceNear": 0.376,
         "clearingUnitPriceNear": 0.4347,
         "totalPaidNear": 0,
         "consumerSurplusNear": 0,
-        "commitmentHash": "7aca0dbe47fb1c759a86cbfc458287b958364cd8aad9c1ce3ff27d6bbef376e7"
+        "commitmentHash": "b40f1b104abfdc65c8482c70fb1080074262b8bb26bf10efd52f2d78ff9efa9e",
+        "nep413SignatureHex": "4ac96e9d12bb13c9e759a4d27574e131220f2f7ab9aa3db0a796bd5df6a222f5bf86cb9b9b75cef8fe249e9c7b525a3d4ecf6914d53741081b947e45fff3cb03"
       }
     ],
     "sellerAllocations": [
       {
         "sellerId": "seller-1.swarm.testnet",
+        "publicKeyNear": "ed25519:Ay1gvF5qTmtEsFVKFz8Ue3MrbnZ2wgtkAUiBXppcffmp",
         "baseAskUnitPriceNear": 0.42,
         "effectiveAskUnitPriceNear": 0.378,
         "floorUnitPriceNear": 0.355,
@@ -487,10 +611,12 @@
         "grossRevenueNear": 6.0858,
         "reputationScore": 98,
         "teeAttested": true,
-        "commitmentHash": "a62de32dcb113bf12bb0ece3ed31eda6202a2a8fc0de2149ee72ca5030544c06"
+        "commitmentHash": "e44d4ce29e841560cb2537e501acc9009a8d0c1014a0b6b9816243e55be5142a",
+        "nep413SignatureHex": "7ccee8ba1053e402c5bd1cf850d9bcc47d490dd082d4eec82927a176241fbddf888d2fbad7b7bb85ff5068aed3d8be6b905258972cb57efa207b13971251910e"
       },
       {
         "sellerId": "seller-2.swarm.testnet",
+        "publicKeyNear": "ed25519:9m4ZV5qL19d4g5HYWiCgYw8Rk2HsaXMrK9KXQRRvYfAD",
         "baseAskUnitPriceNear": 0.44,
         "effectiveAskUnitPriceNear": 0.4048,
         "floorUnitPriceNear": 0.37,
@@ -499,10 +625,12 @@
         "grossRevenueNear": 5.2164,
         "reputationScore": 95,
         "teeAttested": true,
-        "commitmentHash": "8beb2229f4bd784272259d55559ac4f10f6bab7d31cba81d098c7fc0e49a164c"
+        "commitmentHash": "59ded0e62f6cdf6686350e175d6934916cce64fccedee29dd11f7991fb8f8681",
+        "nep413SignatureHex": "a99c3690ca9b15d9f9a57c5c59c0993c044a9b8b5bc9346c9b8c903ae9e2cca91dbbb7f941390fff5054a2858a7fd4b03bf7d6eea1a2c1d0be8d34eaf5702d05"
       },
       {
         "sellerId": "seller-3.swarm.testnet",
+        "publicKeyNear": "ed25519:CE3ZCuie59htBZqLSR4Z1GP17wfMgn2yY5eMLf5Nvet2",
         "baseAskUnitPriceNear": 0.47,
         "effectiveAskUnitPriceNear": 0.4347,
         "floorUnitPriceNear": 0.405,
@@ -511,10 +639,12 @@
         "grossRevenueNear": 2.6082,
         "reputationScore": 91,
         "teeAttested": true,
-        "commitmentHash": "ef51502f77307cdc886df14ddc651aa10f59c160527b297d9939932126d6b86d"
+        "commitmentHash": "8a2af925fb9e2093787581ec5c7754444d872b437b901a91caeeb177b974dbf5",
+        "nep413SignatureHex": "1a7e8db1af1030052c7137dba92a12696a77a61dc29328dc3c11fd90cc8f0aa146dbc5616aab1dddca07e618d91abfc59e0463b2deb89fe44f17d27085e5d805"
       },
       {
         "sellerId": "seller-4.swarm.testnet",
+        "publicKeyNear": "ed25519:BBPkMDREiCZx9ay3bnVTd1oJ5WPMy2HqSjFCtsdoASEx",
         "baseAskUnitPriceNear": 0.52,
         "effectiveAskUnitPriceNear": 0.494,
         "floorUnitPriceNear": 0.45,
@@ -523,10 +653,12 @@
         "grossRevenueNear": 0,
         "reputationScore": 87,
         "teeAttested": false,
-        "commitmentHash": "f4c4ecc6451115ed374ee7c1ffb2104248ee481f9c44602038e946cffba1f316"
+        "commitmentHash": "c823b2d7b67ef11db7cd3a3a2a3cb608e45b83419c4af7d00aa8afee8c339ab4",
+        "nep413SignatureHex": "5a34b1fbb17e7f79e97606e6e81c1e83d19c4c8cfc7d81f1bb7b2d43ffac20a8d7ad35828d5430b2883755a5b8956a4d626abd6e935a55da6a24f06ec18b2604"
       },
       {
         "sellerId": "seller-5.swarm.testnet",
+        "publicKeyNear": "ed25519:EzSLkehCVE4sRpUfyht5bZN1vAxPYhWzmKJUVCHGKe3d",
         "baseAskUnitPriceNear": 0.58,
         "effectiveAskUnitPriceNear": 0.551,
         "floorUnitPriceNear": 0.51,
@@ -535,7 +667,8 @@
         "grossRevenueNear": 0,
         "reputationScore": 84,
         "teeAttested": false,
-        "commitmentHash": "9c98d53319d6a682a257ce0efa5188cb946042557158421c4f7399b09c4470fc"
+        "commitmentHash": "89a0f8a71d72a43905a0a4ed6bb326631ba20817dfdbe356414ea093919e9912",
+        "nep413SignatureHex": "896eab5b995e5265a957189717b8e14063c68aa55d6ca31a00b5b25ee3dda2420f14b4ae8d98ab7c380b433a22c772a100f41afc46a148159a5bae28203aab03"
       }
     ]
   },
@@ -552,7 +685,7 @@
       "primarySellerFloorUnitNear": 0.355,
       "runnerUpSellerId": "seller-2.swarm.testnet",
       "runnerUpUnitAskNear": 0.4048,
-      "finalSelectedSellerId": "contractor.clawswarm.near (internal)",
+      "finalSelectedSellerId": "contractor.veripact.near (internal)",
       "finalAgreedUnitPriceNear": 0.31,
       "finalTotalCostNear": 1.24,
       "savingsVsInitialNear": 0.272,
@@ -645,21 +778,21 @@
           "label": "On-Chain Account Existence (RPC view_account)",
           "triggered": false,
           "riskPoints": 0,
-          "evidence": "Verified on mainnet at block #224.379.118."
+          "evidence": "Verified on mainnet at block #224.380.362."
         },
         {
           "signalId": "SIG-04",
           "label": "Contract Bytecode & Storage Stake Footprint",
           "triggered": false,
           "riskPoints": 0,
-          "evidence": "Contract deployed (code_hash=BtA1BEFNS619..., storage=13.666.437.735 bytes)."
+          "evidence": "Contract deployed (code_hash=BtA1BEFNS619..., storage=13.666.872.192 bytes)."
         },
         {
           "signalId": "SIG-05",
           "label": "Receiver Liquid Balance Telemetry",
           "triggered": false,
           "riskPoints": 0,
-          "evidence": "Liquid balance: 137184.6159 NEAR (healthy operating reserve)."
+          "evidence": "Liquid balance: 137184.1119 NEAR (healthy operating reserve)."
         },
         {
           "signalId": "SIG-06",
@@ -673,18 +806,18 @@
         "accountId": "intents.near",
         "existsOnChain": true,
         "networkQueried": "mainnet",
-        "liquidBalanceNear": 137184.6159,
-        "storageUsageBytes": 13666437735,
+        "liquidBalanceNear": 137184.1119,
+        "storageUsageBytes": 13666872192,
         "codeHash": "BtA1BEFNS619KkvXFsgcpQ21Tb5yMm32aaUkn7xNothk",
         "isSmartContract": true,
         "accessKeyCount": 9,
         "fullAccessKeyCount": 0,
         "functionCallKeyCount": 9,
-        "blockHeight": 224379118,
-        "rpcLatencyMs": 236,
+        "blockHeight": 224380362,
+        "rpcLatencyMs": 237,
         "source": "live-near-rpc"
       },
-      "evaluatedAtIso": "2026-11-13T14:58:58.960Z"
+      "evaluatedAtIso": "2026-11-13T15:10:56.017Z"
     },
     {
       "receiverId": "wrap.near",
@@ -713,21 +846,21 @@
           "label": "On-Chain Account Existence (RPC view_account)",
           "triggered": false,
           "riskPoints": 0,
-          "evidence": "Verified on mainnet at block #224.379.118."
+          "evidence": "Verified on mainnet at block #224.380.362."
         },
         {
           "signalId": "SIG-04",
           "label": "Contract Bytecode & Storage Stake Footprint",
           "triggered": false,
           "riskPoints": 0,
-          "evidence": "Contract deployed (code_hash=DL2f5xmZ44cQ..., storage=169.009.550 bytes)."
+          "evidence": "Contract deployed (code_hash=DL2f5xmZ44cQ..., storage=169.010.425 bytes)."
         },
         {
           "signalId": "SIG-05",
           "label": "Receiver Liquid Balance Telemetry",
           "triggered": false,
           "riskPoints": 0,
-          "evidence": "Liquid balance: 37332909.4338 NEAR (healthy operating reserve)."
+          "evidence": "Liquid balance: 37322939.6877 NEAR (healthy operating reserve)."
         },
         {
           "signalId": "SIG-06",
@@ -741,18 +874,86 @@
         "accountId": "wrap.near",
         "existsOnChain": true,
         "networkQueried": "mainnet",
-        "liquidBalanceNear": 37332909.4338,
-        "storageUsageBytes": 169009550,
+        "liquidBalanceNear": 37322939.6877,
+        "storageUsageBytes": 169010425,
         "codeHash": "DL2f5xmZ44cQRP6vBMt94rvseH5d5KKnAGis2WkTAsh1",
         "isSmartContract": true,
         "accessKeyCount": 0,
         "fullAccessKeyCount": 0,
         "functionCallKeyCount": 0,
-        "blockHeight": 224379118,
-        "rpcLatencyMs": 113,
+        "blockHeight": 224380362,
+        "rpcLatencyMs": 87,
         "source": "live-near-rpc"
       },
-      "evaluatedAtIso": "2026-11-13T14:58:59.074Z"
+      "evaluatedAtIso": "2026-11-13T15:10:56.105Z"
+    },
+    {
+      "receiverId": "v2.ref-finance.near",
+      "proposedAmountNear": 1.15,
+      "methodName": "storage_deposit",
+      "taskMemo": "Verify deep liquidity pool reserve state on Ref Finance v2",
+      "riskScore": 0,
+      "decision": "ALLOW",
+      "signals": [
+        {
+          "signalId": "SIG-01",
+          "label": "Shared Verifiable Risk Registry Check",
+          "triggered": false,
+          "riskPoints": 0,
+          "evidence": "No adverse entries in shared evidence registry."
+        },
+        {
+          "signalId": "SIG-02",
+          "label": "Implicit 64-Hex Receiver Structure",
+          "triggered": false,
+          "riskPoints": 0,
+          "evidence": "Receiver \"v2.ref-finance.near\" uses human-readable named account hierarchy."
+        },
+        {
+          "signalId": "SIG-03",
+          "label": "On-Chain Account Existence (RPC view_account)",
+          "triggered": false,
+          "riskPoints": 0,
+          "evidence": "Verified on mainnet at block #224.380.362."
+        },
+        {
+          "signalId": "SIG-04",
+          "label": "Contract Bytecode & Storage Stake Footprint",
+          "triggered": false,
+          "riskPoints": 0,
+          "evidence": "Contract deployed (code_hash=GZmkbfVLcN7E..., storage=111.362.934 bytes)."
+        },
+        {
+          "signalId": "SIG-05",
+          "label": "Receiver Liquid Balance Telemetry",
+          "triggered": false,
+          "riskPoints": 0,
+          "evidence": "Liquid balance: 32621.7460 NEAR (healthy operating reserve)."
+        },
+        {
+          "signalId": "SIG-06",
+          "label": "Prompt-Boundary Instruction Filter",
+          "triggered": false,
+          "riskPoints": 0,
+          "evidence": "Task payload and memo passed structural instruction sanitization."
+        }
+      ],
+      "telemetry": {
+        "accountId": "v2.ref-finance.near",
+        "existsOnChain": true,
+        "networkQueried": "mainnet",
+        "liquidBalanceNear": 32621.746,
+        "storageUsageBytes": 111362934,
+        "codeHash": "GZmkbfVLcN7ErxU9RDxP24YTaKmoVixhM6XyycP15Qvi",
+        "isSmartContract": true,
+        "accessKeyCount": 0,
+        "fullAccessKeyCount": 0,
+        "functionCallKeyCount": 0,
+        "blockHeight": 224380362,
+        "rpcLatencyMs": 69,
+        "source": "live-near-rpc"
+      },
+      "evaluatedAtIso": "2026-11-13T15:10:56.174Z"
     },
     {
       "receiverId": "seller-3.swarm.testnet",
@@ -820,7 +1021,7 @@
         "rpcLatencyMs": 1,
         "source": "deterministic-fallback"
       },
-      "evaluatedAtIso": "2026-11-13T14:58:59.074Z"
+      "evaluatedAtIso": "2026-11-13T15:10:56.174Z"
     }
   ],
   "keyGuardVerdicts": [
@@ -828,19 +1029,29 @@
       "allowed": true,
       "code": "ALLOWED_FUNCTION_CALL",
       "reason": "Verified FunctionCall intents.near::execute_intent (2.2680 NEAR) within scoped key permissions.",
-      "remainingAllowanceNear": 22.732
+      "remainingAllowanceNear": 22.732,
+      "borshFunctionCallHex": "020e000000657865637574655f696e74656e74340000007b2272656365697665725f6964223a22696e74656e74732e6e656172222c2261747461636865645f6e656172223a322e3236387d00e057eb481b0000000080510085bf8644e0010000000000"
     },
     {
       "allowed": true,
       "code": "ALLOWED_FUNCTION_CALL",
       "reason": "Verified FunctionCall wrap.near::ft_transfer_call (2.9952 NEAR) within scoped key permissions.",
-      "remainingAllowanceNear": 19.7368
+      "remainingAllowanceNear": 19.7368,
+      "borshFunctionCallHex": "021000000066745f7472616e736665725f63616c6c320000007b2272656365697665725f6964223a22777261702e6e656172222c2261747461636865645f6e656172223a322e393935327d00e057eb481b00000000005046be0a1e427a020000000000"
+    },
+    {
+      "allowed": true,
+      "code": "ALLOWED_FUNCTION_CALL",
+      "reason": "Verified FunctionCall v2.ref-finance.near::storage_deposit (1.1500 NEAR) within scoped key permissions.",
+      "remainingAllowanceNear": 18.5868,
+      "borshFunctionCallHex": "020f00000073746f726167655f6465706f7369743a0000007b2272656365697665725f6964223a2276322e7265662d66696e616e63652e6e656172222c2261747461636865645f6e656172223a312e31357d00e057eb481b00000000c012de9efa9f85f3000000000000"
     },
     {
       "allowed": true,
       "code": "ALLOWED_FUNCTION_CALL",
       "reason": "Verified FunctionCall seller-3.swarm.testnet::settle_batch (2.1735 NEAR) within scoped key permissions.",
-      "remainingAllowanceNear": 17.5633
+      "remainingAllowanceNear": 16.4133,
+      "borshFunctionCallHex": "020c000000736574746c655f62617463683f0000007b2272656365697665725f6964223a2273656c6c65722d332e737761726d2e746573746e6574222c2261747461636865645f6e656172223a322e313733357d00e057eb481b0000000070a375dfccab41cc010000000000"
     }
   ],
   "oneClickQuotes": [
@@ -851,11 +1062,11 @@
       "destinationChain": "arb",
       "amountInYocto": "2268000000000000000000000",
       "amountInNear": 2.268,
-      "amountOutFormatted": "8.026025",
-      "amountOutUsd": "8.021923701225",
+      "amountOutFormatted": "7.934416",
+      "amountOutUsd": "7.930551939408",
       "appFeeBps": 10,
       "appFeeRecipient": "5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd",
-      "correlationId": "67f886a9-9a92-450b-be70-4c3c137d2bc9",
+      "correlationId": "b749d385-f0dc-4e50-b9c3-c3d12cc23a19",
       "httpStatus": 201,
       "source": "live-1click-api"
     },
@@ -866,11 +1077,26 @@
       "destinationChain": "base",
       "amountInYocto": "2995200000000000000000000",
       "amountInNear": 2.9952,
-      "amountOutFormatted": "10.604052",
-      "amountOutUsd": "10.598633329428",
+      "amountOutFormatted": "10.484241",
+      "amountOutUsd": "10.479135174633",
       "appFeeBps": 10,
       "appFeeRecipient": "5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd",
-      "correlationId": "58f83c0a-7f2b-4e27-9fe8-8b8fbc9f9d32",
+      "correlationId": "927e632a-2f02-4358-8cd6-733ba1b46bfd",
+      "httpStatus": 201,
+      "source": "live-1click-api"
+    },
+    {
+      "routeId": "route-near-to-eth-usdc",
+      "originAssetId": "nep141:wrap.near",
+      "destinationAssetId": "nep141:eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near",
+      "destinationChain": "eth",
+      "amountInYocto": "2173500000000000000000000",
+      "amountInNear": 2.1735,
+      "amountOutFormatted": "7.309747",
+      "amountOutUsd": "7.306187153211",
+      "appFeeBps": 10,
+      "appFeeRecipient": "5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd",
+      "correlationId": "a6363e3a-6f58-449e-991c-887fd22faca2",
       "httpStatus": 201,
       "source": "live-1click-api"
     }
@@ -885,6 +1111,7 @@
     "grossMarginPct": 53.1,
     "meetsMarginTarget": true,
     "killSwitchTriggered": false,
+    "dailySpendCapTriggered": false,
     "distributions": {
       "operatorTreasuryNear": 6.8763,
       "specialistSolverPoolNear": 1.9647,
@@ -893,16 +1120,19 @@
   },
   "receipts": [
     {
-      "receiptId": "rcpt-001-a619f59dc6",
+      "receiptId": "rcpt-001-47b2633c2a",
       "sequence": 1,
-      "timestampIso": "2026-11-13T14:58:58.705Z",
+      "timestampIso": "2026-11-13T15:10:55.748Z",
       "stage": "TASK_DECOMPOSITION",
-      "actorAccountId": "contractor.clawswarm.near",
-      "publicKeyNear": "ed25519:6cu4RXJDbo8Mpaw3ktEmR86jMCFkdPKb1z3ThpaPWFqV",
+      "actorAccountId": "contractor.veripact.near",
+      "publicKeyNear": "ed25519:HxD7q4XoUEun2SrpzwZwY8eBSRAzMx4cmVYCDa7Qypwe",
       "prevReceiptHash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "payloadHash": "cdf5c0059c928f353356c909b85f521bc5b8aa69b34352da3e2e21b822fe53d1",
-      "receiptHash": "a619f59dc68afb0b1b179d22f314e87a633444dd8e71f21af9f3c90ff8403500",
-      "signatureHex": "8be9146e18debd09594f6065f24279b8fbf6097b3d8458c438294dd3d1c38a3e17d4a1c7dccaaa86e2adb2e509d619cea1539a7984c57035d2a4e83ff5733803",
+      "payloadHash": "11b75b545bc8db406d354fc877018a246b1e4ae93811c701a169a794a532e15f",
+      "receiptHash": "47b2633c2a70f21f35b667c966127452b75cbf81b3e527cf31e55323eee8ecab",
+      "nep413NonceHex": "0000000100000000000000000000000000000000000000000000000000000000",
+      "nep413BorshHex": "9d0100804000000034376232363333633261373066323166333562363637633936363132373435326237356362663831623365353237636633316535353332336565653865636162000000010000000000000000000000000000000000000000000000000000000018000000636f6e74726163746f722e76657269706163742e6e65617200",
+      "nep413DigestHex": "569222fba6dd0548356aba6e9af927c3eecbfc0a07d5387ab9d48b8d5b4fca48",
+      "signatureHex": "9a2f202627352ead1b3ee8a047f296e620eabd821fe15f5479359e12d41fc7bb6aa5a99ce3aaa4c7f8793ae9e6bcfb7afb642a2cfc39b93b95414a75d7e1720d",
       "summary": "Decomposed client goal (18.50 NEAR budget) into 4 typed subtasks.",
       "details": {
         "clientGrossBudgetNear": 18.5,
@@ -916,19 +1146,22 @@
       }
     },
     {
-      "receiptId": "rcpt-002-4742c28e8a",
+      "receiptId": "rcpt-002-c61e0ca817",
       "sequence": 2,
-      "timestampIso": "2026-11-13T14:58:58.710Z",
+      "timestampIso": "2026-11-13T15:10:55.767Z",
       "stage": "SWARM_AUCTION_CLEAR",
-      "actorAccountId": "contractor.clawswarm.near",
-      "publicKeyNear": "ed25519:6cu4RXJDbo8Mpaw3ktEmR86jMCFkdPKb1z3ThpaPWFqV",
-      "prevReceiptHash": "a619f59dc68afb0b1b179d22f314e87a633444dd8e71f21af9f3c90ff8403500",
-      "payloadHash": "3fc4beaf956f9a369e046256cb2e616938876098788a47aa7991cc3023320e6b",
-      "receiptHash": "4742c28e8a716c7c2f4ed61280365d8f6ab50a1e004ee639a51f592da0357a9e",
-      "signatureHex": "83649f080c9664175b4b9873cb00f262ab3ab2304b4c498ecd30db3f8445382f623a262b56fbf105531c84c7980b2483a1ee05c25d2edb945c7c0d9b309bb905",
-      "summary": "Cleared 20x5 Sealed-Bid Swarm Auction (25/25 commitments verified) at uniform price 0.4347 NEAR/unit.",
+      "actorAccountId": "contractor.veripact.near",
+      "publicKeyNear": "ed25519:HxD7q4XoUEun2SrpzwZwY8eBSRAzMx4cmVYCDa7Qypwe",
+      "prevReceiptHash": "47b2633c2a70f21f35b667c966127452b75cbf81b3e527cf31e55323eee8ecab",
+      "payloadHash": "002138b16d51cbc0507d91d9e4a5176a8c647928bee398484897ee0e28936583",
+      "receiptHash": "c61e0ca817224e8ebc0f27c2de06d941274933d2ce3ac38dd0e94c3bdccc13b8",
+      "nep413NonceHex": "0000000247b2633c2a70f21f35b667c966127452b75cbf81b3e527cf31e55323",
+      "nep413BorshHex": "9d01008040000000633631653063613831373232346538656263306632376332646530366439343132373439333364326365336163333864643065393463336264636363313362380000000247b2633c2a70f21f35b667c966127452b75cbf81b3e527cf31e5532318000000636f6e74726163746f722e76657269706163742e6e65617200",
+      "nep413DigestHex": "7705c960b6de93cd2d173a560f503af0048339f10dbda5c586572e82d684d046",
+      "signatureHex": "5c8666527f49b0c7b72fe49e886d686b7198cc8b27f1a31cb4590a087f677cd8adf05515bc1ef5f1914c6f104c2e089ca1a6a70f2020e75be161a70743a72309",
+      "summary": "Cleared 20x5 Sealed-Bid Swarm Auction (25/25 SHA-256 commits & 25/25 NEP-413 signatures verified) at 0.4347 NEAR/unit.",
       "details": {
-        "auctionId": "auc-clawswarm-epoch-2026-01",
+        "auctionId": "auc-veripact-epoch-2026-01",
         "uniformClearingPriceNear": 0.4347,
         "vickreyReferencePriceNear": 0.4347,
         "totalClearedUnits": 32,
@@ -937,23 +1170,26 @@
       }
     },
     {
-      "receiptId": "rcpt-003-f4c6b59f52",
+      "receiptId": "rcpt-003-53b6f73894",
       "sequence": 3,
-      "timestampIso": "2026-11-13T14:58:58.711Z",
+      "timestampIso": "2026-11-13T15:10:55.768Z",
       "stage": "COUNTER_OFFER_NEGOTIATION",
-      "actorAccountId": "contractor.clawswarm.near",
-      "publicKeyNear": "ed25519:6cu4RXJDbo8Mpaw3ktEmR86jMCFkdPKb1z3ThpaPWFqV",
-      "prevReceiptHash": "4742c28e8a716c7c2f4ed61280365d8f6ab50a1e004ee639a51f592da0357a9e",
-      "payloadHash": "b28a2864d8ddd54319988ec9c095ddb8b17ae9bb1767ce94309e5bf359abe9c5",
-      "receiptHash": "f4c6b59f52c9c6d7fa291dcaa1010b4d34b6b057385dddbc9c267e48ef45850c",
-      "signatureHex": "dbefdb14c1753afa417a3fae267a4bc8fd62a7075b08a2873db703e0828cfdf0902b64137468d0620f330627ceda3fc3163bc37f4a41b92afb7a6c4eba01a109",
+      "actorAccountId": "contractor.veripact.near",
+      "publicKeyNear": "ed25519:HxD7q4XoUEun2SrpzwZwY8eBSRAzMx4cmVYCDa7Qypwe",
+      "prevReceiptHash": "c61e0ca817224e8ebc0f27c2de06d941274933d2ce3ac38dd0e94c3bdccc13b8",
+      "payloadHash": "93c98865bfc79ca9cf7ecbf4383df815bcb344a287e287b5d91093fa1a822818",
+      "receiptHash": "53b6f738948a2ee3985eebb2703e630449a3ebc0f2755f56f418d792b0eab751",
+      "nep413NonceHex": "00000003c61e0ca817224e8ebc0f27c2de06d941274933d2ce3ac38dd0e94c3b",
+      "nep413BorshHex": "9d010080400000003533623666373338393438613265653339383565656262323730336536333034343961336562633066323735356635366634313864373932623065616237353100000003c61e0ca817224e8ebc0f27c2de06d941274933d2ce3ac38dd0e94c3b18000000636f6e74726163746f722e76657269706163742e6e65617200",
+      "nep413DigestHex": "fd3b5e7fdefdae35069b859f45232de4c5e34f499e95c13099ba00bc8aaa3b85",
+      "signatureHex": "990c141d5b61c2993b6111424e677f39fcffe2cc9b34ddbf04a4e0736c9a301d8bafd03eeddf1f9e23b52b4f9528844f17c148903e31dc8b31c2e387fe32d809",
       "summary": "Completed Make-vs-Buy & single-round counter-offer negotiation across 4 subtasks (outcomes: MAKE_INTERNAL, ACCEPTED_INITIAL_QUOTE, ACCEPTED_COUNTER_OFFER, WALKED_AWAY_REASSIGNED).",
       "details": {
         "outcomes": [
           {
             "subtaskId": "task-01-telemetry",
             "outcome": "MAKE_INTERNAL",
-            "selected": "contractor.clawswarm.near (internal)",
+            "selected": "contractor.veripact.near (internal)",
             "costNear": 1.24,
             "savedNear": 0.272
           },
@@ -982,17 +1218,20 @@
       }
     },
     {
-      "receiptId": "rcpt-004-15475b44dd",
+      "receiptId": "rcpt-004-07e7125c9b",
       "sequence": 4,
-      "timestampIso": "2026-11-13T14:58:59.074Z",
+      "timestampIso": "2026-11-13T15:10:56.174Z",
       "stage": "FIREWALL_PREFLIGHT",
-      "actorAccountId": "contractor.clawswarm.near",
-      "publicKeyNear": "ed25519:6cu4RXJDbo8Mpaw3ktEmR86jMCFkdPKb1z3ThpaPWFqV",
-      "prevReceiptHash": "f4c6b59f52c9c6d7fa291dcaa1010b4d34b6b057385dddbc9c267e48ef45850c",
-      "payloadHash": "cb8fa582a36d63839e4e9c5fe8f69984f3bde34411978968f01a851ac843e8b3",
-      "receiptHash": "15475b44dd109f7da6ad99a2e8483a9551014732b79aad9e4bd611ea026d5121",
-      "signatureHex": "1e1f95fdfd544c04b5407487eacf24264c0da96b2d31f0012b0c2e0085c165bd66f5c91237cb071f32e86767172a03751ab3a6b4fcbb49b0e6c8610bbd08d603",
-      "summary": "Verified 3 settlement counterparties via 6-signal NEAR RPC risk scorer and scoped FunctionCall key guard.",
+      "actorAccountId": "contractor.veripact.near",
+      "publicKeyNear": "ed25519:HxD7q4XoUEun2SrpzwZwY8eBSRAzMx4cmVYCDa7Qypwe",
+      "prevReceiptHash": "53b6f738948a2ee3985eebb2703e630449a3ebc0f2755f56f418d792b0eab751",
+      "payloadHash": "7287d8db802c3921c48a1ec327c4543650aff0ed779532550179439e0f50a614",
+      "receiptHash": "07e7125c9b15df8048c09a22807ebd93115323478ee9591c652994e52d1f8a5b",
+      "nep413NonceHex": "0000000453b6f738948a2ee3985eebb2703e630449a3ebc0f2755f56f418d792",
+      "nep413BorshHex": "9d01008040000000303765373132356339623135646638303438633039613232383037656264393331313533323334373865653935393163363532393934653532643166386135620000000453b6f738948a2ee3985eebb2703e630449a3ebc0f2755f56f418d79218000000636f6e74726163746f722e76657269706163742e6e65617200",
+      "nep413DigestHex": "1abfb3561c93ba4cd564cd8b91cd548d904c84e9855903ffb74a7ce8ebb87540",
+      "signatureHex": "3d95033f76a033b497c499e87c446a106c99294972458d94105d187d4326dc65535c928d0e9f71cf0ffce6fe7314dbb50128209b33e41e84d72c45eb2bc8d70f",
+      "summary": "Verified 4 settlement counterparties via 6-signal NEAR RPC risk scorer and scoped FunctionCall key guard.",
       "details": {
         "assessments": [
           {
@@ -1008,42 +1247,59 @@
             "rpcSource": "live-near-rpc"
           },
           {
+            "receiverId": "v2.ref-finance.near",
+            "riskScore": 0,
+            "decision": "ALLOW",
+            "rpcSource": "live-near-rpc"
+          },
+          {
             "receiverId": "seller-3.swarm.testnet",
             "riskScore": 0,
             "decision": "ALLOW",
             "rpcSource": "deterministic-fallback"
           }
         ],
-        "remainingKeyAllowanceNear": 17.5633
+        "remainingKeyAllowanceNear": 16.4133
       }
     },
     {
-      "receiptId": "rcpt-005-e128e60a56",
+      "receiptId": "rcpt-005-288375636f",
       "sequence": 5,
-      "timestampIso": "2026-11-13T14:59:00.227Z",
+      "timestampIso": "2026-11-13T15:10:57.757Z",
       "stage": "ONECLICK_SETTLEMENT_QUOTE",
-      "actorAccountId": "contractor.clawswarm.near",
-      "publicKeyNear": "ed25519:6cu4RXJDbo8Mpaw3ktEmR86jMCFkdPKb1z3ThpaPWFqV",
-      "prevReceiptHash": "15475b44dd109f7da6ad99a2e8483a9551014732b79aad9e4bd611ea026d5121",
-      "payloadHash": "4809997645c331c97733cc489130eb74ffe881fcb9670ee081a3fdcd880bd24a",
-      "receiptHash": "e128e60a56613c0741a8b6e47c777e671fbd3a9a3e3f1939ac8e5e41007d594d",
-      "signatureHex": "145f3f56d1ef972f20145f36e09631b396fb1d68eb8197bb9e3701372cc36e47eb64de72c7c55c54cbad5846e6c834be51a859677098168926bfc5aeb8a70105",
-      "summary": "Executed 2 NEAR Intents 1Click dry settlement quotes (ARB: $8.021923701225, BASE: $10.598633329428).",
+      "actorAccountId": "contractor.veripact.near",
+      "publicKeyNear": "ed25519:HxD7q4XoUEun2SrpzwZwY8eBSRAzMx4cmVYCDa7Qypwe",
+      "prevReceiptHash": "07e7125c9b15df8048c09a22807ebd93115323478ee9591c652994e52d1f8a5b",
+      "payloadHash": "16d53eb759910812d44dfaf0f500a167b51f5b43b3f0b6fd2371cccaa3c59964",
+      "receiptHash": "288375636f8934a35928c35028d9d1deb56d0ef4d1af96e5a69b7d4b8dedeb01",
+      "nep413NonceHex": "0000000507e7125c9b15df8048c09a22807ebd93115323478ee9591c652994e5",
+      "nep413BorshHex": "9d01008040000000323838333735363336663839333461333539323863333530323864396431646562353664306566346431616639366535613639623764346238646564656230310000000507e7125c9b15df8048c09a22807ebd93115323478ee9591c652994e518000000636f6e74726163746f722e76657269706163742e6e65617200",
+      "nep413DigestHex": "bd115294d3ea03e0d1e10b9f5c59b169a6bfa9e15cd1dd7fb92df622ebcdb578",
+      "signatureHex": "c2b9fa3cef646cac1c6d332ae1c7a0768335e7a9d70d3a552e383886c58041a5fa26166a423b86a03edd799202877d745f7f47fb4c0f752ca2c0e5a0d0285404",
+      "summary": "Executed 3 NEAR Intents 1Click dry settlement quotes (ARB: $7.930551939408, BASE: $10.479135174633, ETH: $7.306187153211).",
       "details": {
         "quotes": [
           {
             "routeId": "route-near-to-arb-usdc",
             "amountInNear": 2.268,
-            "amountOutFormatted": "8.026025",
-            "correlationId": "67f886a9-9a92-450b-be70-4c3c137d2bc9",
+            "amountOutFormatted": "7.934416",
+            "correlationId": "b749d385-f0dc-4e50-b9c3-c3d12cc23a19",
             "httpStatus": 201,
             "source": "live-1click-api"
           },
           {
             "routeId": "route-near-to-base-usdc",
             "amountInNear": 2.9952,
-            "amountOutFormatted": "10.604052",
-            "correlationId": "58f83c0a-7f2b-4e27-9fe8-8b8fbc9f9d32",
+            "amountOutFormatted": "10.484241",
+            "correlationId": "927e632a-2f02-4358-8cd6-733ba1b46bfd",
+            "httpStatus": 201,
+            "source": "live-1click-api"
+          },
+          {
+            "routeId": "route-near-to-eth-usdc",
+            "amountInNear": 2.1735,
+            "amountOutFormatted": "7.309747",
+            "correlationId": "a6363e3a-6f58-449e-991c-887fd22faca2",
             "httpStatus": 201,
             "source": "live-1click-api"
           }
@@ -1051,16 +1307,19 @@
       }
     },
     {
-      "receiptId": "rcpt-006-fa30f617c5",
+      "receiptId": "rcpt-006-9b2d90050a",
       "sequence": 6,
-      "timestampIso": "2026-11-13T14:59:00.227Z",
+      "timestampIso": "2026-11-13T15:10:57.757Z",
       "stage": "REVENUE_DISTRIBUTION",
-      "actorAccountId": "contractor.clawswarm.near",
-      "publicKeyNear": "ed25519:6cu4RXJDbo8Mpaw3ktEmR86jMCFkdPKb1z3ThpaPWFqV",
-      "prevReceiptHash": "e128e60a56613c0741a8b6e47c777e671fbd3a9a3e3f1939ac8e5e41007d594d",
-      "payloadHash": "432f941312fc5243c09edfc025b3cc9fe2136fadd5e1e377a4fe85c67d485dd4",
-      "receiptHash": "fa30f617c5e0070d8fa925a617c1250334920c4c0a697cb697f483f0593b0f8f",
-      "signatureHex": "8827d8488de817bf5818041621028aad5062c27eaf6ef3983f8b960825a2b6a011a9d2dff7d2fa441492b7482a4b2fc43d0e4496ea65e6cd9425087b0aeee809",
+      "actorAccountId": "contractor.veripact.near",
+      "publicKeyNear": "ed25519:HxD7q4XoUEun2SrpzwZwY8eBSRAzMx4cmVYCDa7Qypwe",
+      "prevReceiptHash": "288375636f8934a35928c35028d9d1deb56d0ef4d1af96e5a69b7d4b8dedeb01",
+      "payloadHash": "b3909d82af9dc6e2f7b6b46691fb78c50cc95e90167e7521822c0cb9fa3551bd",
+      "receiptHash": "9b2d90050af9f5a8aa983e268de96464e792895e7c1d40b7139a7db24a7d905b",
+      "nep413NonceHex": "00000006288375636f8934a35928c35028d9d1deb56d0ef4d1af96e5a69b7d4b",
+      "nep413BorshHex": "9d010080400000003962326439303035306166396635613861613938336532363864653936343634653739323839356537633164343062373133396137646232346137643930356200000006288375636f8934a35928c35028d9d1deb56d0ef4d1af96e5a69b7d4b18000000636f6e74726163746f722e76657269706163742e6e65617200",
+      "nep413DigestHex": "69aa711e60e36ea906ef6a69027ee45b5e2efdd5bff834d0ced94472b68431dd",
+      "signatureHex": "f692a8dd7ae84d6abb3091522f8535e112cf602d83ed76222c01bebc31d21e7b2532b2605c20116ce59cac13023e58c09968d2b6cb1d6d09024dc5545ec21105",
       "summary": "Distributed net operating profit 9.8233 NEAR (53.10% gross margin) across 70/20/10 autonomous business vaults.",
       "details": {
         "clientJobId": "job-institutional-intent-audit-2026",
@@ -1072,6 +1331,7 @@
         "grossMarginPct": 53.1,
         "meetsMarginTarget": true,
         "killSwitchTriggered": false,
+        "dailySpendCapTriggered": false,
         "distributions": {
           "operatorTreasuryNear": 6.8763,
           "specialistSolverPoolNear": 1.9647,

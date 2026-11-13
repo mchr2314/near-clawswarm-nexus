@@ -1,6 +1,7 @@
-// ClawSwarm Nexus — Autonomous Contractor Agent, Make-vs-Buy Planner,
+// VeriPact (ClawSwarm Nexus v2.0) — Autonomous Contractor Agent, Make-vs-Buy Planner,
 // Single-Round Reasoned Counter-Offer Negotiator, Live 1Click Settlement Quoter & Business Ledger
 
+import { parseConfigYamlText } from './config-loader.js';
 import {
   AgentEd25519Signer,
   createScopedAgentSigner,
@@ -9,6 +10,7 @@ import {
   KeyGuardVerdict,
   SignedExecutionReceipt,
 } from './crypto-keys.js';
+import { DefaultBusinessPolicy } from './policy-types.js';
 import {
   CounterpartyRiskAssessment,
   evaluateCounterpartyRisk,
@@ -26,6 +28,8 @@ export interface BusinessPolicyConfig {
   maxSingleTaskNear: number;
   minGrossMarginPct: number;
   negotiationDiscountTargetPct: number;
+  allowedMethods: string[];
+  allowanceNear: number;
   revenueSplitBps: {
     operatorTreasury: number;
     specialistSolverPool: number;
@@ -34,18 +38,37 @@ export interface BusinessPolicyConfig {
 }
 
 export const DEFAULT_BUSINESS_POLICY: BusinessPolicyConfig = {
-  accountId: 'contractor.clawswarm.near',
-  killSwitchActive: false,
-  maxDailySpendNear: 50.0,
-  maxSingleTaskNear: 12.0,
-  minGrossMarginPct: 18.0,
-  negotiationDiscountTargetPct: 12.0,
+  accountId: DefaultBusinessPolicy.agent.accountId,
+  killSwitchActive: DefaultBusinessPolicy.businessPolicy.killSwitchActive,
+  maxDailySpendNear: DefaultBusinessPolicy.businessPolicy.maxDailySpendNear,
+  maxSingleTaskNear: DefaultBusinessPolicy.businessPolicy.maxSingleTaskNear,
+  minGrossMarginPct: DefaultBusinessPolicy.businessPolicy.minGrossMarginPct,
+  negotiationDiscountTargetPct:
+    DefaultBusinessPolicy.businessPolicy.negotiationDiscountTargetPct,
+  allowedMethods: DefaultBusinessPolicy.permissions.scopedAccessKey.allowedMethods,
+  allowanceNear: DefaultBusinessPolicy.permissions.scopedAccessKey.allowanceNear,
   revenueSplitBps: {
-    operatorTreasury: 7000,
-    specialistSolverPool: 2000,
-    riskReserveVault: 1000,
+    ...DefaultBusinessPolicy.businessPolicy.revenueSplitBps,
   },
 };
+
+export function policyFromConfigYaml(rawYaml: string): BusinessPolicyConfig {
+  const parsed = parseConfigYamlText(rawYaml);
+  return {
+    accountId: parsed.agent.accountId,
+    killSwitchActive: parsed.businessPolicy.killSwitchActive,
+    maxDailySpendNear: parsed.businessPolicy.maxDailySpendNear,
+    maxSingleTaskNear: parsed.businessPolicy.maxSingleTaskNear,
+    minGrossMarginPct: parsed.businessPolicy.minGrossMarginPct,
+    negotiationDiscountTargetPct:
+      parsed.businessPolicy.negotiationDiscountTargetPct,
+    allowedMethods: parsed.permissions.scopedAccessKey.allowedMethods,
+    allowanceNear: parsed.permissions.scopedAccessKey.allowanceNear,
+    revenueSplitBps: {
+      ...parsed.businessPolicy.revenueSplitBps,
+    },
+  };
+}
 
 export interface SubtaskSpec {
   subtaskId: string;
@@ -127,6 +150,7 @@ export interface BusinessLedgerSummary {
   grossMarginPct: number;
   meetsMarginTarget: boolean;
   killSwitchTriggered: boolean;
+  dailySpendCapTriggered: boolean;
   distributions: {
     operatorTreasuryNear: number;
     specialistSolverPoolNear: number;
@@ -165,7 +189,6 @@ export function negotiateSubtaskQuote(params: {
     (subtask.unitsRequired * subtask.internalUnitCostNear).toFixed(4)
   );
 
-  // Step 1: Make vs Buy check
   const bestExternalUnit = Math.min(
     params.primaryEffectiveAskUnitNear,
     params.runnerUpEffectiveAskUnitNear
@@ -183,7 +206,7 @@ export function negotiateSubtaskQuote(params: {
       primarySellerFloorUnitNear: params.primaryFloorUnitNear,
       runnerUpSellerId: params.runnerUpSellerId,
       runnerUpUnitAskNear: params.runnerUpEffectiveAskUnitNear,
-      finalSelectedSellerId: 'contractor.clawswarm.near (internal)',
+      finalSelectedSellerId: `${DEFAULT_BUSINESS_POLICY.accountId} (internal)`,
       finalAgreedUnitPriceNear: subtask.internalUnitCostNear,
       finalTotalCostNear: internalTotal,
       savingsVsInitialNear: Number(
@@ -197,7 +220,6 @@ export function negotiateSubtaskQuote(params: {
     };
   }
 
-  // Step 2: External quote is cheaper than internal; check if initial ask <= target reservation budget
   if (params.primaryEffectiveAskUnitNear <= subtask.targetReservationUnitNear) {
     const finalTotal = Number(
       (subtask.unitsRequired * params.primaryEffectiveAskUnitNear).toFixed(4)
@@ -223,7 +245,6 @@ export function negotiateSubtaskQuote(params: {
     };
   }
 
-  // Step 3: Initial ask > target reservation budget -> issue single-round reasoned counter-offer
   const discountedAsk =
     params.primaryEffectiveAskUnitNear * (1 - params.discountTargetPct / 100);
   const counterOfferUnitNear = Number(
@@ -256,7 +277,6 @@ export function negotiateSubtaskQuote(params: {
     };
   }
 
-  // Step 4: Primary seller rejected counter-offer -> Walk away and assign to runner-up
   const selectedUnit =
     params.runnerUpEffectiveAskUnitNear <= subtask.maxWalkAwayUnitNear
       ? params.runnerUpEffectiveAskUnitNear
@@ -264,7 +284,7 @@ export function negotiateSubtaskQuote(params: {
   const selectedSeller =
     params.runnerUpEffectiveAskUnitNear <= subtask.maxWalkAwayUnitNear
       ? params.runnerUpSellerId
-      : 'contractor.clawswarm.near (fallback)';
+      : `${DEFAULT_BUSINESS_POLICY.accountId} (fallback)`;
   const finalTotal = Number((subtask.unitsRequired * selectedUnit).toFixed(4));
   const initialTotal = subtask.unitsRequired * params.primaryEffectiveAskUnitNear;
 
@@ -422,8 +442,8 @@ export async function requestOneClickDryQuote(params: {
     destinationChain: params.destinationChain,
     amountInYocto,
     amountInNear: params.amountNear,
-    amountOutFormatted: (params.amountNear * 3.18).toFixed(4),
-    amountOutUsd: (params.amountNear * 3.18).toFixed(2),
+    amountOutFormatted: (params.amountNear * 3.54).toFixed(4),
+    amountOutUsd: (params.amountNear * 3.54).toFixed(2),
     appFeeBps: 10,
     appFeeRecipient,
     correlationId: `fallback-${params.routeId}-2026`,
@@ -433,26 +453,31 @@ export async function requestOneClickDryQuote(params: {
 }
 
 export async function runContractorWorkflow(options?: {
+  configYamlText?: string;
   policyOverrides?: Partial<BusinessPolicyConfig>;
   clientGrossBudgetNear?: number;
   offlineMode?: boolean;
 }): Promise<ContractorExecutionReport> {
+  const basePolicy = options?.configYamlText
+    ? policyFromConfigYaml(options.configYamlText)
+    : DEFAULT_BUSINESS_POLICY;
+
   const policy: BusinessPolicyConfig = {
-    ...DEFAULT_BUSINESS_POLICY,
+    ...basePolicy,
     ...(options?.policyOverrides ?? {}),
   };
   const clientGrossBudgetNear = options?.clientGrossBudgetNear ?? 18.5;
 
   const signer: AgentEd25519Signer = await createScopedAgentSigner({
     accountId: policy.accountId,
-    allowedReceivers: ['intents.near', 'wrap.near', '*.swarm.testnet'],
-    allowedMethods: [
-      'ft_transfer_call',
-      'execute_intent',
-      'settle_batch',
-      'storage_deposit',
+    allowedReceivers: [
+      'intents.near',
+      'wrap.near',
+      'v2.ref-finance.near',
+      '*.swarm.testnet',
     ],
-    maxAllowanceNear: 25.0,
+    allowedMethods: policy.allowedMethods,
+    maxAllowanceNear: policy.allowanceNear,
     maxSingleCallNear: policy.maxSingleTaskNear,
   });
 
@@ -460,21 +485,20 @@ export async function runContractorWorkflow(options?: {
   let prevHash = '0'.repeat(64);
   let seq = 1;
 
-  // Check Kill-Switch upfront
   if (policy.killSwitchActive) {
     const rKill = await createSignedReceipt({
       signer,
       sequence: seq++,
       prevReceiptHash: prevHash,
       stage: 'BOUNDARY_GUARD_REJECTION',
-      summary: 'Execution halted immediately: Business Policy Kill-Switch is ACTIVE.',
+      summary:
+        'Execution halted immediately: Business Policy Kill-Switch is ACTIVE in config.yaml.',
       details: { killSwitchActive: true, clientGrossBudgetNear },
     });
     receipts.push(rKill);
+    prevHash = rKill.receiptHash;
   }
 
-  // Subtasks decomposition (4 distinct subtasks demonstrating all 4 outcomes:
-  // MAKE_INTERNAL, ACCEPTED_INITIAL_QUOTE, ACCEPTED_COUNTER_OFFER, WALKED_AWAY_REASSIGNED)
   const subtasks: SubtaskSpec[] = [
     {
       subtaskId: 'task-01-telemetry',
@@ -495,7 +519,7 @@ export async function runContractorWorkflow(options?: {
       category: 'verifiable_tee_inference',
       unitsRequired: 6,
       internalUnitCostNear: 0.55,
-      targetReservationUnitNear: 0.40,
+      targetReservationUnitNear: 0.4,
       maxWalkAwayUnitNear: 0.45,
       preferredReceiverId: 'seller-1.swarm.testnet',
       settlementMethod: 'execute_intent',
@@ -545,10 +569,9 @@ export async function runContractorWorkflow(options?: {
   receipts.push(rDecomp);
   prevHash = rDecomp.receiptHash;
 
-  // Step 2: Run 20-Buyer x 5-Seller Commit-Reveal Sealed-Bid Swarm Auction
   const roster = generateDefault20x5SwarmRoster('crosschain_intent_routing');
   const swarmAuction = await runSealedBidSwarmAuction({
-    auctionId: 'auc-clawswarm-epoch-2026-01',
+    auctionId: 'auc-veripact-epoch-2026-01',
     subtaskCategory: 'crosschain_intent_routing',
     buyers: roster.buyers,
     sellers: roster.sellers,
@@ -559,7 +582,7 @@ export async function runContractorWorkflow(options?: {
     sequence: seq++,
     prevReceiptHash: prevHash,
     stage: 'SWARM_AUCTION_CLEAR',
-    summary: `Cleared 20x5 Sealed-Bid Swarm Auction (${swarmAuction.validCommitmentsVerified}/25 commitments verified) at uniform price ${swarmAuction.uniformClearingPriceNear.toFixed(4)} NEAR/unit.`,
+    summary: `Cleared 20x5 Sealed-Bid Swarm Auction (${swarmAuction.validCommitmentsVerified}/25 SHA-256 commits & ${swarmAuction.validNep413SignaturesVerified}/25 NEP-413 signatures verified) at ${swarmAuction.uniformClearingPriceNear.toFixed(4)} NEAR/unit.`,
     details: {
       auctionId: swarmAuction.auctionId,
       uniformClearingPriceNear: swarmAuction.uniformClearingPriceNear,
@@ -572,7 +595,6 @@ export async function runContractorWorkflow(options?: {
   receipts.push(rSwarm);
   prevHash = rSwarm.receiptHash;
 
-  // Step 3: Run Make-vs-Buy and Single-Round Reasoned Counter-Offer Negotiation across all 4 subtasks
   const sellerMap = new Map(
     swarmAuction.sellerAllocations.map((s) => [s.sellerId, s])
   );
@@ -582,7 +604,6 @@ export async function runContractorWorkflow(options?: {
   const s4 = sellerMap.get('seller-4.swarm.testnet')!;
 
   const negotiations: NegotiationTranscript[] = [
-    // Task 1: Internal unit cost (0.31) < best external ask (0.378) -> MAKE_INTERNAL
     negotiateSubtaskQuote({
       subtask: subtasks[0],
       primarySellerId: s1.sellerId,
@@ -592,7 +613,6 @@ export async function runContractorWorkflow(options?: {
       runnerUpEffectiveAskUnitNear: s2.effectiveAskUnitPriceNear,
       discountTargetPct: policy.negotiationDiscountTargetPct,
     }),
-    // Task 2: Primary effective ask (0.378) <= reservation target (0.40) -> ACCEPTED_INITIAL_QUOTE
     negotiateSubtaskQuote({
       subtask: subtasks[1],
       primarySellerId: s1.sellerId,
@@ -602,7 +622,6 @@ export async function runContractorWorkflow(options?: {
       runnerUpEffectiveAskUnitNear: s2.effectiveAskUnitPriceNear,
       discountTargetPct: policy.negotiationDiscountTargetPct,
     }),
-    // Task 3: Primary ask (0.4048 from seller-2) > target (0.39), counter-offer (0.3744) >= floor (0.37) -> ACCEPTED_COUNTER_OFFER
     negotiateSubtaskQuote({
       subtask: subtasks[2],
       primarySellerId: s2.sellerId,
@@ -612,7 +631,6 @@ export async function runContractorWorkflow(options?: {
       runnerUpEffectiveAskUnitNear: s3.effectiveAskUnitPriceNear,
       discountTargetPct: policy.negotiationDiscountTargetPct,
     }),
-    // Task 4: Primary ask (0.494 from seller-4) > target (0.38), counter-offer (0.4347) < floor (0.45) -> WALKED_AWAY_REASSIGNED to seller-3 (0.4348)
     negotiateSubtaskQuote({
       subtask: subtasks[3],
       primarySellerId: s4.sellerId,
@@ -643,7 +661,6 @@ export async function runContractorWorkflow(options?: {
   receipts.push(rNeg);
   prevHash = rNeg.receiptHash;
 
-  // Step 4: Live RPC Counterparty Risk Firewall & Scoped FunctionCall Key Guard
   const firewallTargets = [
     {
       receiverId: 'intents.near',
@@ -658,6 +675,12 @@ export async function runContractorWorkflow(options?: {
       memo: 'Wrap & route Task-03 cross-chain liquidity settlement',
     },
     {
+      receiverId: 'v2.ref-finance.near',
+      amountNear: 1.15,
+      methodName: 'storage_deposit',
+      memo: 'Verify deep liquidity pool reserve state on Ref Finance v2',
+    },
+    {
       receiverId: 'seller-3.swarm.testnet',
       amountNear: negotiations[3].finalTotalCostNear,
       methodName: 'settle_batch',
@@ -667,6 +690,12 @@ export async function runContractorWorkflow(options?: {
 
   const firewallAssessments: CounterpartyRiskAssessment[] = [];
   const keyGuardVerdicts: KeyGuardVerdict[] = [];
+
+  const plannedTotalSpendNear = Number(
+    negotiations.reduce((sum, n) => sum + n.finalTotalCostNear, 0).toFixed(4)
+  );
+  const dailySpendCapTriggered = plannedTotalSpendNear > policy.maxDailySpendNear;
+  const haltExecution = policy.killSwitchActive || dailySpendCapTriggered;
 
   for (const t of firewallTargets) {
     const assessment = await evaluateCounterpartyRisk({
@@ -702,7 +731,7 @@ export async function runContractorWorkflow(options?: {
         methodName: t.methodName,
         attachedNear: t.amountNear,
       },
-      !policy.killSwitchActive && assessment.decision === 'ALLOW'
+      !haltExecution && assessment.decision === 'ALLOW'
     );
     keyGuardVerdicts.push(verdict);
   }
@@ -728,8 +757,7 @@ export async function runContractorWorkflow(options?: {
   receipts.push(rFirewall);
   prevHash = rFirewall.receiptHash;
 
-  // Step 5: Fetch Live NEAR.AI Catalog & Request Live 1Click Dry Settlement Quotes
-  const [nearAiTelemetry, quoteArb, quoteBase] = await Promise.all([
+  const [nearAiTelemetry, quoteArb, quoteBase, quoteSol] = await Promise.all([
     options?.offlineMode
       ? Promise.resolve({
           totalModels: 64,
@@ -750,8 +778,8 @@ export async function runContractorWorkflow(options?: {
           destinationChain: 'arb',
           amountInYocto: '2268000000000000000000000',
           amountInNear: negotiations[1].finalTotalCostNear,
-          amountOutFormatted: '6.842100',
-          amountOutUsd: '6.84',
+          amountOutFormatted: '8.026025',
+          amountOutUsd: '8.03',
           appFeeBps: 10,
           appFeeRecipient:
             '5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd',
@@ -776,8 +804,8 @@ export async function runContractorWorkflow(options?: {
           destinationChain: 'base',
           amountInYocto: '2995200000000000000000000',
           amountInNear: negotiations[2].finalTotalCostNear,
-          amountOutFormatted: '9.035400',
-          amountOutUsd: '9.04',
+          amountOutFormatted: '10.604052',
+          amountOutUsd: '10.60',
           appFeeBps: 10,
           appFeeRecipient:
             '5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd',
@@ -793,9 +821,35 @@ export async function runContractorWorkflow(options?: {
           amountNear: negotiations[2].finalTotalCostNear,
           recipientAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
         }),
+    options?.offlineMode
+      ? Promise.resolve({
+          routeId: 'route-near-to-eth-usdc',
+          originAssetId: 'nep141:wrap.near',
+          destinationAssetId:
+            'nep141:eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near',
+          destinationChain: 'eth',
+          amountInYocto: '2173500000000000000000000',
+          amountInNear: negotiations[3].finalTotalCostNear,
+          amountOutFormatted: '7.694190',
+          amountOutUsd: '7.69',
+          appFeeBps: 10,
+          appFeeRecipient:
+            '5880ad2b362620fadf759cbceb1cd5737ce8c6ed7fb8e9942881e6731f9247dd',
+          correlationId: 'offline-eth-quote-03',
+          httpStatus: 201,
+          source: 'deterministic-fallback' as const,
+        })
+      : requestOneClickDryQuote({
+          routeId: 'route-near-to-eth-usdc',
+          destinationAssetId:
+            'nep141:eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near',
+          destinationChain: 'eth',
+          amountNear: negotiations[3].finalTotalCostNear,
+          recipientAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+        }),
   ]);
 
-  const oneClickQuotes = [quoteArb, quoteBase];
+  const oneClickQuotes = [quoteArb, quoteBase, quoteSol];
 
   const rOneClick = await createSignedReceipt({
     signer,
@@ -817,22 +871,15 @@ export async function runContractorWorkflow(options?: {
   receipts.push(rOneClick);
   prevHash = rOneClick.receiptHash;
 
-  // Step 6: Business P&L & Revenue Distribution Calculation
-  const totalSubtaskSpendNear = policy.killSwitchActive
-    ? 0
-    : Number(
-        negotiations
-          .reduce((sum, n) => sum + n.finalTotalCostNear, 0)
-          .toFixed(4)
-      );
+  const totalSubtaskSpendNear = haltExecution ? 0 : plannedTotalSpendNear;
   const totalNegotiationSavingsNear = Number(
     negotiations.reduce((sum, n) => sum + n.savingsVsInitialNear, 0).toFixed(4)
   );
-  const netOperatingProfitNear = policy.killSwitchActive
+  const netOperatingProfitNear = haltExecution
     ? 0
     : Number((clientGrossBudgetNear - totalSubtaskSpendNear).toFixed(4));
   const grossMarginPct =
-    clientGrossBudgetNear > 0 && !policy.killSwitchActive
+    clientGrossBudgetNear > 0 && !haltExecution
       ? Number(((netOperatingProfitNear / clientGrossBudgetNear) * 100).toFixed(2))
       : 0;
 
@@ -866,6 +913,7 @@ export async function runContractorWorkflow(options?: {
     grossMarginPct,
     meetsMarginTarget: grossMarginPct >= policy.minGrossMarginPct,
     killSwitchTriggered: policy.killSwitchActive,
+    dailySpendCapTriggered,
     distributions: {
       operatorTreasuryNear,
       specialistSolverPoolNear,
@@ -878,7 +926,9 @@ export async function runContractorWorkflow(options?: {
     sequence: seq++,
     prevReceiptHash: prevHash,
     stage: 'REVENUE_DISTRIBUTION',
-    summary: `Distributed net operating profit ${netOperatingProfitNear.toFixed(4)} NEAR (${grossMarginPct.toFixed(2)}% gross margin) across 70/20/10 autonomous business vaults.`,
+    summary: haltExecution
+      ? `Outbound settlement halted (${policy.killSwitchActive ? 'killSwitchActive=true' : `planned spend ${plannedTotalSpendNear} > maxDailySpendNear ${policy.maxDailySpendNear}`}); 0 NEAR spent.`
+      : `Distributed net operating profit ${netOperatingProfitNear.toFixed(4)} NEAR (${grossMarginPct.toFixed(2)}% gross margin) across 70/20/10 autonomous business vaults.`,
     details: { ...ledger },
   });
   receipts.push(rRevenue);

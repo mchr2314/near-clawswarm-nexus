@@ -24,6 +24,152 @@ type ActiveTab =
   | 'boundary'
   | 'receipts';
 
+function SupplyDemandCurveSvg({ swarm }: { swarm: SwarmAuctionResult }) {
+  const width = 560;
+  const height = 220;
+  const padL = 48;
+  const padR = 20;
+  const padT = 20;
+  const padB = 34;
+  const plotW = width - padL - padR;
+  const plotH = height - padT - padB;
+
+  const maxUnits = Math.max(swarm.totalDemandUnits, swarm.totalSupplyUnits, 45);
+  const minP = 0.3;
+  const maxP = 0.72;
+
+  const xOf = (u: number) => padL + (u / maxUnits) * plotW;
+  const yOf = (p: number) =>
+    padT + plotH - ((p - minP) / (maxP - minP)) * plotH;
+
+  // Build step points for demand (buyers descending)
+  const demandPts: string[] = [];
+  let cumD = 0;
+  for (const b of swarm.buyerAllocations) {
+    const x1 = xOf(cumD);
+    const y = yOf(b.maxUnitPriceNear);
+    cumD += b.unitsRequested;
+    const x2 = xOf(cumD);
+    demandPts.push(`${x1.toFixed(1)},${y.toFixed(1)}`, `${x2.toFixed(1)},${y.toFixed(1)}`);
+  }
+
+  // Build step points for supply (sellers ascending)
+  const supplyPts: string[] = [];
+  let cumS = 0;
+  for (const s of swarm.sellerAllocations) {
+    const x1 = xOf(cumS);
+    const y = yOf(s.effectiveAskUnitPriceNear);
+    cumS += s.maxCapacityUnits;
+    const x2 = xOf(cumS);
+    supplyPts.push(`${x1.toFixed(1)},${y.toFixed(1)}`, `${x2.toFixed(1)},${y.toFixed(1)}`);
+  }
+
+  const clearY = yOf(swarm.uniformClearingPriceNear);
+  const clearX = xOf(swarm.totalClearedUnits);
+
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      style={{
+        width: '100%',
+        height: 'auto',
+        background: '#070b14',
+        borderRadius: 8,
+        border: '1px solid #1f2d4d',
+        marginBottom: 14,
+      }}
+    >
+      {/* Horizontal Price Gridlines */}
+      {[0.35, 0.45, 0.55, 0.65].map((p) => (
+        <g key={p}>
+          <line
+            x1={padL}
+            y1={yOf(p)}
+            x2={width - padR}
+            y2={yOf(p)}
+            stroke="#151f38"
+            strokeDasharray="3 3"
+          />
+          <text
+            x={padL - 6}
+            y={yOf(p) + 4}
+            fontSize="10"
+            fill="#94a3b8"
+            textAnchor="end"
+          >
+            {p.toFixed(2)}
+          </text>
+        </g>
+      ))}
+
+      {/* Clearing Price Line */}
+      <line
+        x1={padL}
+        y1={clearY}
+        x2={width - padR}
+        y2={clearY}
+        stroke="#fbbf24"
+        strokeWidth="1.5"
+        strokeDasharray="5 4"
+      />
+      <line
+        x1={clearX}
+        y1={padT}
+        x2={clearX}
+        y2={height - padB}
+        stroke="#fbbf24"
+        strokeWidth="1.2"
+        strokeDasharray="3 3"
+      />
+
+      {/* Demand Step Curve (Green) */}
+      <polyline
+        fill="none"
+        stroke="#00ec97"
+        strokeWidth="2.4"
+        points={demandPts.join(' ')}
+      />
+
+      {/* Supply Step Curve (Cyan) */}
+      <polyline
+        fill="none"
+        stroke="#38bdf8"
+        strokeWidth="2.4"
+        points={supplyPts.join(' ')}
+      />
+
+      {/* Intersection Point */}
+      <circle cx={clearX} cy={clearY} r="5" fill="#fbbf24" />
+      <text
+        x={Math.min(clearX + 8, width - 175)}
+        y={clearY - 8}
+        fontSize="11"
+        fontWeight="700"
+        fill="#fbbf24"
+      >
+        Clear: {swarm.uniformClearingPriceNear.toFixed(4)} NEAR ({swarm.totalClearedUnits}u)
+      </text>
+
+      {/* Legend */}
+      <text x={padL + 8} y={padT + 14} fontSize="11" fill="#00ec97" fontWeight="600">
+        ── 20 Buyers Demand Curve
+      </text>
+      <text x={padL + 175} y={padT + 14} fontSize="11" fill="#38bdf8" fontWeight="600">
+        ── 5 Sellers Pooled Supply Curve
+      </text>
+      <text
+        x={width / 2}
+        y={height - 8}
+        fontSize="10"
+        fill="#94a3b8"
+        textAnchor="middle"
+      >
+        Cumulative Task Units (u) — Uniform Second-Price (Vickrey) Clearing Intersection
+      </text>
+    </svg>
+  );
+}
+
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('contractor');
   const [report, setReport] = useState<ContractorExecutionReport | null>(null);
@@ -32,14 +178,12 @@ export function App() {
   const [swarmState, setSwarmState] = useState<SwarmAuctionResult | null>(null);
   const [tamperedSimulated, setTamperedSimulated] = useState(false);
 
-  // Interactive Policy Controls
   const [budgetInput, setBudgetInput] = useState<number>(18.5);
   const [killSwitchActive, setKillSwitchActive] = useState<boolean>(false);
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
 
-  // Live Counterparty Scanner State
   const [scanAccount, setScanAccount] = useState<string>('intents.near');
-  const [scanAmount, setScanAmount] = useState<number>(4.5);
+  const [scanAmount] = useState<number>(4.5);
   const [scanMemo, setScanMemo] = useState<string>(
     'Settle cross-chain solver batch via NEAR Intents'
   );
@@ -106,7 +250,7 @@ export function App() {
     const res = await runSealedBidSwarmAuction({
       auctionId: nextTamper
         ? 'auc-tamper-check-2026'
-        : 'auc-clawswarm-epoch-2026-01',
+        : 'auc-veripact-epoch-2026-01',
       subtaskCategory: 'crosschain_intent_routing',
       buyers: roster.buyers,
       sellers: roster.sellers,
@@ -139,7 +283,7 @@ export function App() {
   if (!report || !swarmState) {
     return (
       <div className="nexus-shell">
-        <h2>Loading ClawSwarm Nexus Telemetry...</h2>
+        <h2>Loading VeriPact Telemetry...</h2>
       </div>
     );
   }
@@ -150,20 +294,22 @@ export function App() {
         <div>
           <div className="badge-row">
             <span className="pill green">NEAR Hackathon 2026</span>
-            <span className="pill cyan">Tracks: Agents • Swarms • Security • Business</span>
+            <span className="pill cyan">
+              Tracks: Agents • Swarms • Security • Business
+            </span>
             <span className="pill">
-              Scoped Key: {report.agentPublicKeyNear.slice(0, 22)}...
+              NEP-413 Signer: {report.agentPublicKeyNear.slice(0, 22)}...
             </span>
           </div>
           <h1 className="nexus-title">
-            ClawSwarm Nexus — Verifiable Contractor Agent & Swarm Clearinghouse
+            VeriPact — NEP-413 Verifiable Contractor Agent & Swarm Clearinghouse
           </h1>
           <p className="nexus-subtitle">
             Autonomous General Contractor with Make-vs-Buy planning, 20-Buyer ×
-            5-Seller commit-reveal sealed-bid clearinghouse, single-round
+            5-Seller NEP-413 signed commit-reveal clearinghouse, single-round
             counter-offer negotiation, 6-signal live NEAR RPC counterparty
-            firewall, scoped FunctionCall access key guard, and 1Click
-            cross-chain settlement.
+            firewall, Borsh FunctionCall access key guard, and 3-chain 1Click
+            settlement.
           </p>
         </div>
 
@@ -216,8 +362,8 @@ export function App() {
             {swarmState.uniformClearingPriceNear.toFixed(4)} NEAR
           </div>
           <div className="kpi-sub">
-            {swarmState.validCommitmentsVerified}/25 SHA-256 commits •{' '}
-            {swarmState.totalClearedUnits} units cleared
+            {swarmState.validCommitmentsVerified}/25 SHA-256 & NEP-413 sigs •{' '}
+            {swarmState.totalClearedUnits}u cleared
           </div>
         </div>
 
@@ -253,7 +399,7 @@ export function App() {
           </div>
           <div className="kpi-sub">
             {report.nearAiTelemetry.confidentialTeeModels} Confidential TEE •
-            1Click HTTP {report.oneClickQuotes[0]?.httpStatus ?? 201}
+            ARB, BASE, ETH HTTP {report.oneClickQuotes[0]?.httpStatus ?? 201}
           </div>
         </div>
 
@@ -264,7 +410,7 @@ export function App() {
             {boundaryReport?.totalScenariosTested ?? 4} Blocked
           </div>
           <div className="kpi-sub">
-            {report.receipts.length} Ed25519 hash-chained receipts verified
+            {report.receipts.length} NEP-413 Borsh receipts verified
           </div>
         </div>
       </section>
@@ -280,7 +426,7 @@ export function App() {
           className={`tab-btn ${activeTab === 'swarm' ? 'active' : ''}`}
           onClick={() => setActiveTab('swarm')}
         >
-          2. 20×5 Sealed-Bid Swarm Clearinghouse (Track 05)
+          2. 20×5 NEP-413 Sealed-Bid Clearinghouse (Track 05)
         </button>
         <button
           className={`tab-btn ${activeTab === 'firewall' ? 'active' : ''}`}
@@ -298,7 +444,7 @@ export function App() {
           className={`tab-btn ${activeTab === 'receipts' ? 'active' : ''}`}
           onClick={() => setActiveTab('receipts')}
         >
-          5. Ed25519 Signed Hash-Chained Receipts ({report.receipts.length})
+          5. NEP-413 Borsh Wire Receipts ({report.receipts.length})
         </button>
       </nav>
 
@@ -335,7 +481,13 @@ export function App() {
                       </div>
                     </td>
                     <td className="mono">
-                      Internal: {(n.internalTotalCostNear / (report.subtasks.find((s) => s.subtaskId === n.subtaskId)?.unitsRequired ?? 1)).toFixed(4)} NEAR/u
+                      Internal:{' '}
+                      {(
+                        n.internalTotalCostNear /
+                        (report.subtasks.find((s) => s.subtaskId === n.subtaskId)
+                          ?.unitsRequired ?? 1)
+                      ).toFixed(4)}{' '}
+                      NEAR/u
                       <br />
                       Initial Ask: {n.initialUnitAskNear.toFixed(4)} NEAR/u
                     </td>
@@ -387,7 +539,7 @@ export function App() {
             <div className="section-card">
               <div className="section-header">
                 <h2 className="section-title">
-                  NEAR Intents 1Click Cross-Chain Settlement Quotes
+                  NEAR Intents 1Click Cross-Chain Settlement Quotes (3 Chains)
                 </h2>
                 <span className="pill cyan">POST /v0/quote (dry: true)</span>
               </div>
@@ -466,14 +618,14 @@ export function App() {
                     </td>
                   </tr>
                   <tr>
-                    <td>70% → Operator Treasury (`treasury.clawswarm.near`)</td>
+                    <td>70% → Operator Treasury (`treasury.veripact.near`)</td>
                     <td className="mono">
                       {report.ledger.distributions.operatorTreasuryNear.toFixed(4)}{' '}
                       NEAR
                     </td>
                   </tr>
                   <tr>
-                    <td>20% → Specialist Solver Rebate (`pool.clawswarm.near`)</td>
+                    <td>20% → Specialist Solver Rebate (`pool.veripact.near`)</td>
                     <td className="mono">
                       {report.ledger.distributions.specialistSolverPoolNear.toFixed(
                         4
@@ -482,7 +634,7 @@ export function App() {
                     </td>
                   </tr>
                   <tr>
-                    <td>10% → Security & Slippage Reserve (`reserve.clawswarm.near`)</td>
+                    <td>10% → Security & Slippage Reserve (`reserve.veripact.near`)</td>
                     <td className="mono">
                       {report.ledger.distributions.riskReserveVaultNear.toFixed(4)}{' '}
                       NEAR
@@ -501,14 +653,18 @@ export function App() {
             <div className="section-header">
               <div>
                 <h2 className="section-title">
-                  20-Buyer × 5-Seller Commit-Reveal Sealed-Bid Clearinghouse
+                  20-Buyer × 5-Seller NEP-413 Signed Commit-Reveal Clearinghouse
                 </h2>
                 <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>
                   Uniform Vickrey-Adjusted Clearing Price:{' '}
                   <strong>
                     {swarmState.uniformClearingPriceNear.toFixed(4)} NEAR/unit
                   </strong>{' '}
-                  • Total Buyer Consumer Surplus:{' '}
+                  • NEP-413 Ed25519 Signatures Verified:{' '}
+                  <strong>
+                    {swarmState.validNep413SignaturesVerified}/25
+                  </strong>{' '}
+                  • Buyer Surplus Saved:{' '}
                   <strong>
                     {swarmState.totalBuyerSurplusNear.toFixed(4)} NEAR
                   </strong>
@@ -524,6 +680,8 @@ export function App() {
               </button>
             </div>
 
+            <SupplyDemandCurveSvg swarm={swarmState} />
+
             <div className="two-col">
               <div>
                 <h3 style={{ fontSize: 14, marginTop: 0 }}>
@@ -532,7 +690,7 @@ export function App() {
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>Seller ID</th>
+                      <th>Seller ID & NEP-413 Key</th>
                       <th>Base → Effective Ask</th>
                       <th>Floor</th>
                       <th>Awarded</th>
@@ -544,6 +702,9 @@ export function App() {
                       <tr key={s.sellerId}>
                         <td className="mono">
                           {s.sellerId}
+                          <div style={{ fontSize: 10, color: '#94a3b8' }}>
+                            {s.publicKeyNear.slice(0, 20)}...
+                          </div>
                           <div>
                             {s.teeAttested && (
                               <span className="pill green">TEE</span>
@@ -579,7 +740,7 @@ export function App() {
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>Buyer ID</th>
+                      <th>Buyer ID & NEP-413 Sig</th>
                       <th>Max Bid</th>
                       <th>Filled</th>
                       <th>Paid</th>
@@ -589,7 +750,12 @@ export function App() {
                   <tbody>
                     {swarmState.buyerAllocations.slice(0, 10).map((b) => (
                       <tr key={b.buyerId}>
-                        <td className="mono">{b.buyerId}</td>
+                        <td className="mono">
+                          {b.buyerId}
+                          <div style={{ fontSize: 10, color: '#94a3b8' }}>
+                            Sig: {b.nep413SignatureHex.slice(0, 14)}...
+                          </div>
+                        </td>
                         <td className="mono">
                           {b.maxUnitPriceNear.toFixed(4)} NEAR
                         </td>
@@ -632,12 +798,12 @@ export function App() {
                 className="btn"
                 onClick={() =>
                   void handleLiveScan(
-                    'wrap.near',
-                    'Wrap native NEAR for 1Click solver quote'
+                    'v2.ref-finance.near',
+                    'Query Ref Finance v2 liquidity pool reserves'
                   )
                 }
               >
-                Preset: wrap.near (Safe)
+                Preset: v2.ref-finance.near (Safe)
               </button>
               <button
                 className="btn danger"
@@ -789,7 +955,7 @@ export function App() {
                 <th>Proposed Action & Receiver</th>
                 <th>Firewall Verdict</th>
                 <th>Scoped FunctionCall Key Verdict</th>
-                <th>Signed Rejection Receipt</th>
+                <th>NEP-413 Signed Rejection Receipt</th>
               </tr>
             </thead>
             <tbody>
@@ -837,6 +1003,8 @@ export function App() {
                   <td className="mono">
                     {s.receipt.receiptId}
                     <br />
+                    NEP-413: {s.receipt.nep413BorshHex.slice(0, 14)}...
+                    <br />
                     Sig: {s.receipt.signatureHex.slice(0, 18)}...
                   </td>
                 </tr>
@@ -850,11 +1018,11 @@ export function App() {
         <div className="section-card">
           <div className="section-header">
             <h2 className="section-title">
-              Hash-Chained Ed25519 Signed Execution Receipts
+              NEP-413 Borsh Wire-Format & Hash-Chained Ed25519 Execution Receipts
             </h2>
             <span className="pill green">
               {chainVerified
-                ? '100% Ed25519 Signatures & SHA-256 Chain Intact'
+                ? '100% NEP-413 Tag (0x8000019d) & Ed25519 Signatures Intact'
                 : 'Verification Pending'}
             </span>
           </div>
@@ -864,7 +1032,7 @@ export function App() {
                 <th>Seq</th>
                 <th>Stage</th>
                 <th>Summary</th>
-                <th>Prev Receipt Hash → Current Hash</th>
+                <th>NEP-413 Borsh Wire Hex & Digest</th>
                 <th>Ed25519 Signature</th>
               </tr>
             </thead>
@@ -877,9 +1045,9 @@ export function App() {
                   </td>
                   <td>{r.summary}</td>
                   <td className="mono">
-                    Prev: {r.prevReceiptHash.slice(0, 14)}...
+                    Borsh: <strong>{r.nep413BorshHex.slice(0, 16)}...</strong>
                     <br />
-                    Curr: <strong>{r.receiptHash.slice(0, 14)}...</strong>
+                    SHA-256: {r.nep413DigestHex.slice(0, 16)}...
                   </td>
                   <td className="mono">{r.signatureHex.slice(0, 22)}...</td>
                 </tr>
