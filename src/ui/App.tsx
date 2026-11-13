@@ -549,7 +549,7 @@ export function App() {
                     <th>Route</th>
                     <th>Input (wNEAR)</th>
                     <th>Quoted Output</th>
-                    <th>Correlation ID</th>
+                    <th>Mainnet Escrow & Solver Sig</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -566,7 +566,11 @@ export function App() {
                       <td className="mono">
                         {q.amountOutFormatted} USDC (${q.amountOutUsd})
                       </td>
-                      <td className="mono">{q.correlationId.slice(0, 18)}...</td>
+                      <td className="mono">
+                        Escrow: {q.mainnetDepositAddress?.slice(0, 14) ?? '1d8f86...'}...
+                        <br />
+                        Sig: {q.solverSignatureNear?.slice(0, 18) ?? 'ed25519:...'}...
+                      </td>
                       <td>
                         <span className="pill green">
                           HTTP {q.httpStatus} ({q.source})
@@ -576,6 +580,34 @@ export function App() {
                   ))}
                 </tbody>
               </table>
+              {report.onChainProof && (
+                <div
+                  style={{
+                    marginTop: 14,
+                    padding: 12,
+                    borderRadius: 8,
+                    background: '#070b14',
+                    border: '1px solid #1f2d4d',
+                    fontSize: 12,
+                  }}
+                >
+                  <div style={{ fontWeight: 700, color: '#00ec97', marginBottom: 6 }}>
+                    On-Chain NEAR Execution Proof ({report.onChainProof.source})
+                  </div>
+                  <div className="mono">
+                    Account: {report.onChainProof.agentAccountId} • Scoped Key:{' '}
+                    {report.onChainProof.scopedFunctionCallPublicKeyNear.slice(0, 22)}...
+                  </div>
+                  <div className="mono" style={{ marginTop: 4 }}>
+                    Registration Tx:{' '}
+                    <strong>{report.onChainProof.permissionRegistrationTxHash}</strong>
+                  </div>
+                  <div className="mono" style={{ marginTop: 4 }}>
+                    Contract Execution (`wrap.testnet`) Tx:{' '}
+                    <strong>{report.onChainProof.contractExecutionTxHash}</strong>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="section-card">

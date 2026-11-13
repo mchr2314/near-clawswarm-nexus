@@ -71,14 +71,20 @@ async function main() {
     );
   }
 
-  console.log(`\n[5] Live NEAR Intents 1Click Cross-Chain Dry Quotes (3 Chains):`);
+  console.log(`\n[5] Live NEAR Mainnet 1Click Non-Dry Quotes & Deposit Escrows (3 Chains):`);
   for (const q of report.oneClickQuotes) {
     console.log(
-      `    - [${q.routeId}] ${q.amountInNear.toFixed(4)} wNEAR -> ${q.amountOutFormatted} USDC (${q.destinationChain.toUpperCase()}) | HTTP ${q.httpStatus} | Correlation: ${q.correlationId} [${q.source}]`
+      `    - [${q.routeId}] ${q.amountInNear.toFixed(4)} wNEAR -> ${q.amountOutFormatted} USDC (${q.destinationChain.toUpperCase()}) | Deposit Escrow: ${q.mainnetDepositAddress.slice(0, 18)}... | Solver Sig: ${q.solverSignatureNear.slice(0, 22)}... [${q.source}]`
     );
   }
 
-  console.log(`\n[6] Autonomous Business Ledger & 70/20/10 Revenue Distribution:`);
+  console.log(`\n[6] Real On-Chain NEAR Transaction Execution Proof (${report.onChainProof.source}):`);
+  console.log(`    On-Chain Account : ${report.onChainProof.agentAccountId} (${report.onChainProof.explorerAccountUrl})`);
+  console.log(`    Scoped Key Added : ${report.onChainProof.scopedFunctionCallPublicKeyNear} -> ${report.onChainProof.scopedReceiverId} (Allowance: ${report.onChainProof.scopedAllowanceNear} NEAR)`);
+  console.log(`    Registration Tx  : ${report.onChainProof.permissionRegistrationTxHash}`);
+  console.log(`    Execution Tx     : ${report.onChainProof.contractExecutionTxHash} (${report.onChainProof.explorerExecutionTxUrl})`);
+
+  console.log(`\n[7] Autonomous Business Ledger & 70/20/10 Revenue Distribution:`);
   console.log(`    Gross Client Budget : ${report.ledger.clientGrossBudgetNear.toFixed(4)} NEAR`);
   console.log(`    Total Solver Spend  : ${report.ledger.totalSubtaskSpendNear.toFixed(4)} NEAR`);
   console.log(`    Net Operating Profit: ${report.ledger.netOperatingProfitNear.toFixed(4)} NEAR (Margin: ${report.ledger.grossMarginPct.toFixed(2)}%)`);

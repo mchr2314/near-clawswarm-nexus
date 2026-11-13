@@ -8,26 +8,18 @@ export const NEP413_TAG_U32 = 2147484061;
 
 export function encodeBase58(bytes: Uint8Array): string {
   if (bytes.length === 0) return '';
-  const digits = [0];
+  let num = 0n;
   for (let i = 0; i < bytes.length; i++) {
-    let carry = bytes[i];
-    for (let j = 0; j < digits.length; j++) {
-      carry += digits[j] << 8;
-      digits[j] = carry % 58;
-      carry = (carry / 58) | 0;
-    }
-    while (carry > 0) {
-      digits.push(carry % 58);
-      carry = (carry / 58) | 0;
-    }
+    num = (num << 8n) | BigInt(bytes[i]);
   }
-  let leadingZeros = 0;
-  while (leadingZeros < bytes.length && bytes[leadingZeros] === 0) {
-    leadingZeros++;
+  let result = '';
+  while (num > 0n) {
+    const rem = Number(num % 58n);
+    result = BASE58_ALPHABET[rem] + result;
+    num /= 58n;
   }
-  let result = '1'.repeat(leadingZeros);
-  for (let i = digits.length - 1; i >= 0; i--) {
-    result += BASE58_ALPHABET[digits[i]];
+  for (let i = 0; i < bytes.length && bytes[i] === 0; i++) {
+    result = '1' + result;
   }
   return result;
 }
