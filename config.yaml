@@ -1,0 +1,35 @@
+# ClawSwarm Nexus — Autonomous Contractor & Business Policy Configuration
+agent:
+  accountId: "contractor.clawswarm.near"
+  networkId: "mainnet"
+  rpcEndpoint: "https://free.rpc.fastnear.com"
+  oneClickEndpoint: "https://1click.chaindefuser.com"
+  nearAiEndpoint: "https://cloud-api.near.ai/v1/models"
+
+permissions:
+  scopedAccessKey:
+    receiverId: "intents.near"
+    allowanceNear: 25.0
+    allowedMethods:
+      - "ft_transfer_call"
+      - "execute_intent"
+      - "settle_batch"
+      - "storage_deposit"
+
+businessPolicy:
+  killSwitchActive: false
+  maxDailySpendNear: 50.0
+  maxSingleTaskNear: 12.0
+  minGrossMarginPct: 18.0
+  negotiationDiscountTargetPct: 12.0
+  maxCounterOfferRounds: 1
+  revenueSplitBps:
+    operatorTreasury: 7000
+    specialistSolverPool: 2000
+    riskReserveVault: 1000
+
+securityFirewall:
+  blockThresholdScore: 70
+  warnThresholdScore: 35
+  minVerifiedContractStorageBytes: 1000
+  requireExplicitNamedAccountAboveNear: 2.5

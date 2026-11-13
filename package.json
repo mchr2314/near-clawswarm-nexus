@@ -1,0 +1,30 @@
+{
+  "name": "near-clawswarm-nexus",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ClawSwarm Nexus — Verifiable Contractor Agent, 20x5 Sealed-Bid Solver Swarm, Live RPC Counterparty Risk Scorer & Scoped Function-Call Key Guard on NEAR",
+  "type": "module",
+  "scripts": {
+    "demo": "tsx src/cli/run-demo.ts",
+    "boundary-eval": "tsx src/cli/run-boundary-eval.ts",
+    "dev": "vite --host 127.0.0.1 --port 5174",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4174",
+    "test": "vitest run",
+    "verify": "npm run demo && npm run boundary-eval && npm test && npm run build"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}
