@@ -379,8 +379,8 @@ export function App() {
     async function initLoad() {
       try {
         const [rRes, bRes] = await Promise.all([
-          fetch('/data/latest-run.json'),
-          fetch('/data/boundary-eval.json'),
+          fetch('./data/latest-run.json'),
+          fetch('./data/boundary-eval.json'),
         ]);
         if (rRes.ok) {
           const data = (await rRes.json()) as ContractorExecutionReport;
