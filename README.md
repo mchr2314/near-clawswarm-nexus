@@ -3,6 +3,7 @@
 > **NEAR Hackathon 2026 Submission (`nearhackathon.com`)**
 > - **Tracks Covered:** `["agents", "swarms", "security", "business"]` (Tracks `07-agents`, `05-swarms`, `06-security`, `04-business`)
 > - **Live Web Mission Control:** `https://mchr2314.github.io/near-clawswarm-nexus/`
+> - **NEAR Mainnet Operator / Payout Address:** `7c26d89c3391ae3309816da50ab2cd29799e52accf3c81120d17777ed849b0b1`
 > - **License:** MIT ([LICENSE](./LICENSE))
 > - **Formal Market & Security Specification:** [RULES.md](./RULES.md)
 > - **Independent Second Submission Disclosure (`Q-015`):** This participant also authored the independent `thesis` track research artifact **[near-protocol-pnl](https://github.com/mchr2314/near-protocol-pnl)** (*Empirical Protocol-Level Income Statement, Validator Emissions & Cross-Chain Intents Fee Capture Analysis for NEAR*, live at `https://mchr2314.github.io/near-protocol-pnl/`). Both projects have zero shared source files and solve completely distinct tracks.
